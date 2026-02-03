@@ -1,26 +1,138 @@
 @import "tailwindcss";
 
+/* Variables – couleur principale #1a005d */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Colors */
+  --color-brand-primary: #1a005d;
+  --color-text-heading: #1a005d;
+  --color-text-body: #2a2a3e;
+  --color-button-text: #4a4a5e;
+  --color-link-text: #5a5a6e;
+  --color-border-light: #e0e2ee;
+  --color-background-white: #ffffff;
+  --color-section-muted: #f5f4fa;
+  --color-section-tint: #ebe8f5;
+  --color-footer-bg: #1a005d;
+  --color-button-primary-bg: #1a005d;
+  --color-button-primary-hover: #25007a;
+  --font-size-heading-2: clamp(1.5rem, 3vw, 2.25rem);
+  --font-size-heading-3: clamp(1.125rem, 2vw, 1.5rem);
+  --font-size-body: 1rem;
+  --font-size-small: 0.875rem;
+
+  /* Typography */
+  --font-family-sans: ui-sans-serif, system-ui, sans-serif, "Segoe UI", Roboto, sans-serif;
+  --font-size-tagline: 0.875rem;
+  --font-size-heading-1: clamp(2rem, 4vw, 3rem);
+  --font-size-button: 1rem;
+  --font-size-link: 1rem;
+  --font-weight-normal: 400;
+  --font-weight-medium: 500;
+  --font-weight-bold: 700;
+  --font-weight-extrabold: 800;
+  --line-height-heading: 1.2;
+  --letter-spacing-expanded: 0.08em;
+
+  /* Spacing */
+  --padding-section-x: clamp(1.5rem, 5vw, 4rem);
+  --padding-section-y: clamp(2rem, 6vw, 4rem);
+  --gap-button-link: 1.5rem;
+  --padding-button-x: 1.5rem;
+  --padding-button-y: 0.875rem;
+
+  /* Border & radius */
+  --border-radius-button: 0.5rem;
+
+  /* Shadows */
+  --shadow-button: 0 4px 14px rgba(0, 0, 0, 0.08);
+  --shadow-button-hover: 0 6px 20px rgba(0, 0, 0, 0.12);
+  --shadow-wave: 0 0 0 1px rgba(0, 0, 0, 0.04);
+  --shadow-header: 0 4px 24px rgba(26, 0, 93, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
+  --shadow-nav-elevated: 0 8px 32px rgba(26, 0, 93, 0.06), 0 2px 12px rgba(0, 0, 0, 0.04);
+  --radius-header: 1rem;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+/* Navbar professionnelle */
+.nav-link {
+  position: relative;
+}
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -4px;
+  width: 0;
+  height: 2px;
+  background: var(--color-brand-primary);
+  transition: width 0.2s ease;
+}
+.nav-link:hover::after,
+.nav-link[data-active="true"]::after {
+  width: 100%;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+/* Arrière-plan hero – style futuriste */
+.hero-bg-futuristic {
+  position: relative;
+  background-color: #0a0018;
+  background-image:
+    linear-gradient(160deg, rgba(26, 0, 93, 0.15) 0%, transparent 40%),
+    linear-gradient(220deg, rgba(37, 0, 117, 0.12) 0%, transparent 45%),
+    linear-gradient(90deg, transparent 0%, rgba(26, 0, 93, 0.06) 100%);
+  overflow: hidden;
+}
+
+.hero-bg-futuristic::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(26, 0, 93, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26, 0, 93, 0.03) 1px, transparent 1px);
+  background-size: 48px 48px;
+  pointer-events: none;
+}
+
+.hero-bg-futuristic .hero-glow-1 {
+  position: absolute;
+  width: 80%;
+  height: 60%;
+  top: -20%;
+  left: -30%;
+  background: radial-gradient(ellipse, rgba(26, 0, 93, 0.2) 0%, rgba(37, 0, 117, 0.08) 40%, transparent 70%);
+  pointer-events: none;
+  animation: hero-glow-pulse 8s ease-in-out infinite;
+}
+
+.hero-bg-futuristic .hero-glow-2 {
+  position: absolute;
+  width: 50%;
+  height: 80%;
+  bottom: -30%;
+  right: -10%;
+  background: radial-gradient(ellipse, rgba(26, 0, 93, 0.12) 0%, transparent 60%);
+  pointer-events: none;
+  animation: hero-glow-pulse 10s ease-in-out infinite 1s;
+}
+
+.hero-bg-futuristic .hero-content-wrap {
+  position: relative;
+  z-index: 1;
+}
+
+@keyframes hero-glow-pulse {
+  0%, 100% { opacity: 0.8; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.05); }
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-family-sans);
+  color: var(--color-text-body);
+  background: var(--color-background-white);
+}
+
+/* Slider projets : masquer la scrollbar tout en gardant le scroll */
+[data-slider]::-webkit-scrollbar,
+.overflow-x-auto::-webkit-scrollbar {
+  display: none;
 }
