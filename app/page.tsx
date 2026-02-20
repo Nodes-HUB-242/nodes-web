@@ -1,12 +1,13 @@
 "use client";
 
 import Image from "next/image";
-import { useState, useRef, useCallback } from "react";
+import { useState, useRef, useCallback, useEffect } from "react";
 
 const NAV_LINKS = [
-  { label: "Accueil", href: "#" },
-  { label: "Pages", href: "#" },
-  { label: "Contact", href: "#" },
+  { label: "Accueil", href: "#hero" },
+  { label: "Services", href: "#services" },
+  { label: "Projets", href: "#projects" },
+  { label: "Contact", href: "#contact" },
 ];
 
 const LINKEDIN_URL = "https://cg.linkedin.com/company/nodes-technology";
@@ -44,35 +45,57 @@ const CLIENT_LOGOS = ["NSIA Assurances", "AIRTEL Congo", "BCI Congo", "CARIA", "
 const FOOTER_SERVICES = ["Intelligence Artificielle", "Assistant Virtuel", "Chatbot Intelligent", "Marketing Ciblée", "Formation BASE64", "Transformation Digitale"];
 const FOOTER_LINKS = ["À propos", "Notre équipe", "Tarifs", "Actualités", "Nous contacter"];
 
-const CARD_WIDTH = 320;
-const CARD_GAP = 24;
+const CARD_WIDTH_DESKTOP = 320;
+const CARD_WIDTH_MOBILE = 280;
+const CARD_GAP_DESKTOP = 24;
+const CARD_GAP_MOBILE = 16;
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [projectIndex, setProjectIndex] = useState(0);
+  const [isMobile, setIsMobile] = useState(true);
   const projectsRef = useRef<HTMLDivElement>(null);
+
+  const cardWidth = isMobile ? CARD_WIDTH_MOBILE : CARD_WIDTH_DESKTOP;
+  const cardGap = isMobile ? CARD_GAP_MOBILE : CARD_GAP_DESKTOP;
 
   const scrollProjects = useCallback((direction: "prev" | "next") => {
     const el = projectsRef.current;
     if (!el) return;
-    const step = (CARD_WIDTH + CARD_GAP) * (direction === "next" ? 1 : -1);
+    const step = (cardWidth + cardGap) * (direction === "next" ? 1 : -1);
     el.scrollBy({ left: step, behavior: "smooth" });
-  }, []);
+  }, [cardWidth, cardGap]);
 
   const handleProjectsScroll = useCallback(() => {
     const el = projectsRef.current;
     if (!el) return;
-    const index = Math.round(el.scrollLeft / (CARD_WIDTH + CARD_GAP));
+    const index = Math.round(el.scrollLeft / (cardWidth + cardGap));
     setProjectIndex(Math.min(index, PROJECT_SLIDES.length - 1));
+  }, [cardWidth, cardGap]);
+
+  const goToProject = useCallback((i: number) => {
+    projectsRef.current?.scrollTo({
+      left: i * (cardWidth + cardGap),
+      behavior: "smooth",
+    });
+    setProjectIndex(i);
+  }, [cardWidth, cardGap]);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(min-width: 640px)");
+    const update = () => setIsMobile(!mq.matches);
+    update();
+    mq.addEventListener("change", update);
+    return () => mq.removeEventListener("change", update);
   }, []);
 
   return (
     <>
       {/* Navbar professionnelle – glassmorphism, barre flottante */}
-      <header className="fixed top-0 left-0 right-0 z-50 px-4 pt-4 lg:px-6 lg:pt-6">
+      <header className="fixed top-0 left-0 right-0 z-50 px-3 pt-3 sm:px-4 sm:pt-4 lg:px-6 lg:pt-6">
         <div
-          className="max-w-6xl mx-auto flex items-center justify-between rounded-2xl px-5 py-3.5 lg:px-8 lg:py-4 border border-white/60 transition-all duration-300"
+          className="max-w-6xl mx-auto flex items-center justify-between rounded-xl sm:rounded-2xl px-4 py-3 sm:px-5 sm:py-3.5 lg:px-8 lg:py-4 border border-white/60 transition-all duration-300"
           style={{
             background: "rgba(255, 255, 255, 0.82)",
             backdropFilter: "blur(12px)",
@@ -80,7 +103,7 @@ export default function Home() {
             boxShadow: "var(--shadow-nav-elevated)",
           }}
         >
-          <a href="#" className="flex items-center gap-2.5" style={{ fontFamily: "var(--font-family-sans)" }}>
+          <a href="#hero" className="flex items-center gap-2.5" style={{ fontFamily: "var(--font-family-sans)" }}>
             <span className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 bg-[var(--color-brand-primary)] text-white">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /></svg>
             </span>
@@ -100,15 +123,15 @@ export default function Home() {
               </a>
             ))}
           </nav>
-          <div className="flex items-center gap-2">
-            <button type="button" className="p-2.5 text-[var(--color-text-body)] hover:text-[var(--color-brand-primary)] rounded-xl hover:bg-[var(--color-section-tint)] transition-colors" aria-label="Rechercher">
+          <div className="flex items-center gap-1 sm:gap-2">
+            <button type="button" className="hidden sm:flex p-2.5 text-[var(--color-text-body)] hover:text-[var(--color-brand-primary)] rounded-xl hover:bg-[var(--color-section-tint)] transition-colors" aria-label="Rechercher">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                 <circle cx="11" cy="11" r="8" />
                 <path d="m21 21-4.35-4.35" />
               </svg>
             </button>
             <a
-              href="#appointment"
+              href="#contact"
               className="hidden sm:inline-flex items-center justify-center rounded-xl px-5 py-2.5 text-white text-sm font-[var(--font-weight-medium)] tracking-wide transition-all duration-200 hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[var(--color-button-primary-bg)]"
               style={{ backgroundColor: "var(--color-button-primary-bg)", fontFamily: "var(--font-family-sans)", boxShadow: "0 2px 12px rgba(26, 0, 93, 0.25)" }}
             >
@@ -129,7 +152,7 @@ export default function Home() {
         </div>
         {mobileMenuOpen && (
           <>
-            <div className="md:hidden fixed inset-0 top-[5.5rem] bg-black/20 backdrop-blur-sm z-40" aria-hidden onClick={() => setMobileMenuOpen(false)} />
+            <div className="md:hidden fixed inset-0 top-[4.5rem] sm:top-[5.5rem] bg-black/20 backdrop-blur-sm z-40" aria-hidden onClick={() => setMobileMenuOpen(false)} />
             <div
               className="md:hidden absolute left-4 right-4 mt-3 rounded-2xl border border-[var(--color-border-light)] p-5 z-50 flex flex-col gap-1"
               style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", boxShadow: "var(--shadow-nav-elevated)" }}
@@ -139,7 +162,7 @@ export default function Home() {
                   {link.label}
                 </a>
               ))}
-              <a href="#appointment" className="mt-2 inline-flex justify-center rounded-xl px-4 py-3 text-white font-[var(--font-weight-medium)] text-sm" style={{ backgroundColor: "var(--color-button-primary-bg)" }} onClick={() => setMobileMenuOpen(false)}>
+              <a href="#contact" className="mt-2 inline-flex justify-center rounded-xl px-4 py-3 text-white font-[var(--font-weight-medium)] text-sm" style={{ backgroundColor: "var(--color-button-primary-bg)" }} onClick={() => setMobileMenuOpen(false)}>
                 Consultation gratuite
               </a>
             </div>
@@ -147,8 +170,8 @@ export default function Home() {
         )}
       </header>
 
-      {/* Hero – fond plein écran + overlay sombre (inspiration corporate) */}
-      <section className="relative min-h-screen flex items-center pt-28 lg:pt-0">
+      {/* Hero */}
+      <section id="hero" className="relative min-h-[100svh] min-h-screen flex items-center pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-0 lg:pb-0">
         <div className="absolute inset-0">
           <Image
             src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=85"
@@ -181,14 +204,14 @@ export default function Home() {
               </span>{" "}
               des gens plus simple et meilleure.
             </h1>
-            <div className="w-16 h-0.5 mt-5 mb-5 rounded-full bg-[var(--color-brand-primary)]" aria-hidden />
-            <p className="text-white/85 mb-8 max-w-lg leading-relaxed" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-body)" }}>
+            <div className="w-12 sm:w-16 h-0.5 mt-4 mb-4 sm:mt-5 sm:mb-5 rounded-full bg-[var(--color-brand-primary)]" aria-hidden />
+            <p className="text-white/85 mb-6 sm:mb-8 max-w-lg leading-relaxed text-sm sm:text-base" style={{ fontFamily: "var(--font-family-sans)" }}>
               Spécialistes en intelligence artificielle et automatisation, nous aidons les leaders à construire des équipes à fort impact. Notre mission : repousser les frontières de l&apos;innovation technologique.
             </p>
-            <div className="flex flex-wrap items-center gap-5">
+            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-5">
               <a
                 href="#services"
-                className="inline-flex items-center justify-center gap-2 rounded-[var(--border-radius-button)] px-6 py-3.5 text-white font-[var(--font-weight-medium)] transition-all hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[var(--color-button-primary-bg)]"
+                className="inline-flex items-center justify-center gap-2 rounded-[var(--border-radius-button)] px-5 py-3 sm:px-6 sm:py-3.5 text-white text-sm sm:text-base font-[var(--font-weight-medium)] transition-all hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[var(--color-button-primary-bg)]"
                 style={{ backgroundColor: "var(--color-button-primary-bg)", fontFamily: "var(--font-family-sans)", boxShadow: "0 4px 14px rgba(26, 0, 93, 0.35)" }}
               >
                 Travailler avec Nodes
@@ -208,7 +231,7 @@ export default function Home() {
 
       {/* Services */}
       <section id="services" className="py-[var(--padding-section-y)] px-[var(--padding-section-x)]" style={{ background: "var(--color-section-muted)" }}>
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 lg:gap-16 items-start">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
           <div>
             <a href="#get-started" className="inline-block uppercase tracking-[var(--letter-spacing-expanded)] text-[var(--color-brand-primary)] font-[var(--font-weight-medium)] text-[var(--font-size-tagline)] mb-4" style={{ fontFamily: "var(--font-family-sans)" }}>
               COMMENCER
@@ -220,7 +243,7 @@ export default function Home() {
               Nous croyons que la technologie peut transformer les entreprises et améliorer la vie des gens. Notre équipe conçoit des solutions IA sur mesure : assistants virtuels, chatbots intelligents, marketing ciblée et formation (BASE64).
             </p>
             <a
-              href="#read-more"
+              href="#process"
               className="inline-flex items-center justify-center rounded-[var(--border-radius-button)] px-5 py-2.5 text-white font-[var(--font-weight-medium)] transition-colors hover:opacity-90"
               style={{ backgroundColor: "var(--color-button-primary-bg)", fontFamily: "var(--font-family-sans)" }}
             >
@@ -229,7 +252,7 @@ export default function Home() {
           </div>
           <div className="grid sm:grid-cols-2 gap-6">
             {SERVICES.map((s) => (
-              <div key={s.title} className="p-6 rounded-xl bg-white shadow-sm border border-[var(--color-border-light)]">
+              <div key={s.title} className="p-4 sm:p-6 rounded-xl bg-white shadow-sm border border-[var(--color-border-light)]">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: "var(--color-section-tint)", color: "var(--color-brand-primary)" }}>
                   {s.icon === "gear" && <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" /></svg>}
                   {s.icon === "chart" && <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3v18h18" /><path d="m7 16 4-4 4 2 4-6" /></svg>}
@@ -245,19 +268,19 @@ export default function Home() {
       </section>
 
       {/* Team */}
-      <section className="py-[var(--padding-section-y)] px-[var(--padding-section-x)]" style={{ background: "var(--color-section-tint)" }}>
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
-          <div className="relative aspect-[4/5] max-h-[500px] rounded-2xl overflow-hidden">
+      <section id="story" className="py-[var(--padding-section-y)] px-[var(--padding-section-x)]" style={{ background: "var(--color-section-tint)" }}>
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+          <div className="relative aspect-[4/5] max-h-[320px] sm:max-h-[400px] lg:max-h-[500px] rounded-xl sm:rounded-2xl overflow-hidden order-2 lg:order-1">
             <Image src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80" alt="Membre de l'équipe" fill className="object-cover object-top" sizes="(max-width: 1024px) 100vw, 50vw" />
           </div>
-          <div>
+          <div className="order-1 lg:order-2">
             <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-4" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
               Une équipe d&apos;experts au service de l&apos;IA
             </h2>
             <p className="text-[var(--color-text-body)] mb-8" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-body)" }}>
               Nodes Technology est une entreprise congolaise basée à Brazzaville. Nous développons des solutions d&apos;intelligence artificielle et d&apos;automatisation pour les entreprises (télécoms, assurance, finance) et formons la nouvelle génération via BASE64.
             </p>
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {TEAM_FEATURES.map((f) => (
                 <div key={f.label} className="flex items-center gap-3">
                   <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: "var(--color-brand-primary)", color: "white" }}>
@@ -272,16 +295,16 @@ export default function Home() {
       </section>
 
       {/* Process */}
-      <section className="py-[var(--padding-section-y)] px-[var(--padding-section-x)]" style={{ background: "var(--color-background-white)" }}>
+      <section id="process" className="py-[var(--padding-section-y)] px-[var(--padding-section-x)]" style={{ background: "var(--color-background-white)" }}>
         <div className="max-w-7xl mx-auto">
           <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-12 text-center" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
             Notre processus métier
           </h2>
           <div className="grid lg:grid-cols-2 gap-12 items-center">
-            <div className="space-y-8">
+            <div className="space-y-6 sm:space-y-8 order-1 lg:order-none">
               {PROCESS_STEPS.map((step) => (
-                <div key={step.num} className="flex gap-6">
-                  <span className="text-4xl lg:text-5xl font-[var(--font-weight-extrabold)] shrink-0" style={{ color: "var(--color-section-tint)", fontFamily: "var(--font-family-sans)" }}>{step.num}</span>
+                <div key={step.num} className="flex gap-4 sm:gap-6">
+                  <span className="text-3xl sm:text-4xl lg:text-5xl font-[var(--font-weight-extrabold)] shrink-0" style={{ color: "var(--color-section-tint)", fontFamily: "var(--font-family-sans)" }}>{step.num}</span>
                   <div>
                     <h3 className="font-[var(--font-weight-bold)] text-[var(--color-text-heading)] mb-2" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-3)" }}>{step.title}</h3>
                     <p className="text-[var(--color-text-body)] text-[var(--font-size-small)]" style={{ fontFamily: "var(--font-family-sans)" }}>{step.desc}</p>
@@ -299,7 +322,7 @@ export default function Home() {
       {/* Projects – slider UI/UX amélioré */}
       <section id="projects" className="py-[var(--padding-section-y)] px-[var(--padding-section-x)]" style={{ background: "var(--color-section-tint)" }}>
         <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-10">
+          <div className="text-center mb-8 sm:mb-10">
             <span className="inline-block uppercase tracking-[var(--letter-spacing-expanded)] text-[var(--color-brand-primary)] font-[var(--font-weight-medium)] text-[var(--font-size-tagline)] mb-3" style={{ fontFamily: "var(--font-family-sans)" }}>
               Portfolio
             </span>
@@ -312,30 +335,30 @@ export default function Home() {
           </div>
 
           <div className="relative group/slider">
-            <div className="absolute left-0 top-0 bottom-4 z-10 w-16 bg-gradient-to-r from-[var(--color-section-tint)] to-transparent pointer-events-none" aria-hidden />
-            <div className="absolute right-0 top-0 bottom-4 z-10 w-16 bg-gradient-to-l from-[var(--color-section-tint)] to-transparent pointer-events-none" aria-hidden />
+            <div className="absolute left-0 top-0 bottom-4 z-10 w-6 sm:w-12 md:w-16 bg-gradient-to-r from-[var(--color-section-tint)] to-transparent pointer-events-none" aria-hidden />
+            <div className="absolute right-0 top-0 bottom-4 z-10 w-6 sm:w-12 md:w-16 bg-gradient-to-l from-[var(--color-section-tint)] to-transparent pointer-events-none" aria-hidden />
 
             <button
               type="button"
               onClick={() => scrollProjects("prev")}
-              className="absolute left-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white shadow-lg border border-[var(--color-border-light)] flex items-center justify-center text-[var(--color-brand-primary)] transition-all hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2"
+              className="absolute left-1 sm:left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-lg border border-[var(--color-border-light)] flex items-center justify-center text-[var(--color-brand-primary)] transition-all hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2"
               aria-label="Projet précédent"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
+              <svg className="w-5 h-5 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
             </button>
             <button
               type="button"
               onClick={() => scrollProjects("next")}
-              className="absolute right-0 top-1/2 -translate-y-1/2 z-20 w-12 h-12 rounded-full bg-white shadow-lg border border-[var(--color-border-light)] flex items-center justify-center text-[var(--color-brand-primary)] transition-all hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2"
+              className="absolute right-1 sm:right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-lg border border-[var(--color-border-light)] flex items-center justify-center text-[var(--color-brand-primary)] transition-all hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2"
               aria-label="Projet suivant"
             >
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
+              <svg className="w-5 h-5 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
             </button>
 
             <div
               ref={projectsRef}
               onScroll={handleProjectsScroll}
-              className="flex gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory py-2 pb-6 -mx-2 px-2"
+              className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory py-2 pb-6 -mx-1 sm:-mx-2 px-2"
               style={{ scrollbarWidth: "none" }}
               role="region"
               aria-label="Carrousel de projets"
@@ -343,8 +366,8 @@ export default function Home() {
               {PROJECT_SLIDES.map((slide, i) => (
                 <article
                   key={i}
-                  className="shrink-0 snap-center rounded-2xl overflow-hidden bg-white border border-[var(--color-border-light)] shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-[var(--color-brand-primary)]/20 focus-within:ring-2 focus-within:ring-[var(--color-brand-primary)] focus-within:ring-offset-2"
-                  style={{ width: CARD_WIDTH }}
+                  className="shrink-0 snap-center rounded-xl sm:rounded-2xl overflow-hidden bg-white border border-[var(--color-border-light)] shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 hover:border-[var(--color-brand-primary)]/20 focus-within:ring-2 focus-within:ring-[var(--color-brand-primary)] focus-within:ring-offset-2"
+                  style={{ width: cardWidth }}
                 >
                   <div className="relative aspect-[320/220] overflow-hidden">
                     <Image
@@ -376,10 +399,7 @@ export default function Home() {
                   role="tab"
                   aria-selected={i === projectIndex}
                   aria-label={`Aller au projet ${i + 1}`}
-                  onClick={() => {
-                    projectsRef.current?.scrollTo({ left: i * (CARD_WIDTH + CARD_GAP), behavior: "smooth" });
-                    setProjectIndex(i);
-                  }}
+                  onClick={() => goToProject(i)}
                   className="h-2 rounded-full transition-all duration-300 focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2"
                   style={{ width: i === projectIndex ? 24 : 8, backgroundColor: i === projectIndex ? "var(--color-brand-primary)" : "var(--color-border-light)" }}
                 />
@@ -390,7 +410,7 @@ export default function Home() {
           <div className="text-center mt-10">
             <a
               href="#projects"
-              className="inline-flex items-center justify-center rounded-[var(--border-radius-button)] px-6 py-3.5 text-white font-[var(--font-weight-medium)] transition-all duration-200 hover:opacity-90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[var(--color-button-primary-bg)]"
+              className="inline-flex items-center justify-center rounded-[var(--border-radius-button)] px-5 py-3 sm:px-6 sm:py-3.5 text-white text-sm sm:text-base font-[var(--font-weight-medium)] transition-all duration-200 hover:opacity-90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[var(--color-button-primary-bg)]"
               style={{ backgroundColor: "var(--color-button-primary-bg)", fontFamily: "var(--font-family-sans)", boxShadow: "0 4px 14px rgba(26, 0, 93, 0.25)" }}
             >
               VOIR TOUS LES PROJETS
@@ -401,7 +421,7 @@ export default function Home() {
 
       {/* Testimonials */}
       <section className="py-[var(--padding-section-y)] px-[var(--padding-section-x)]" style={{ background: "var(--color-background-white)" }}>
-        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-12 items-center">
+        <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
           <div>
             <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: "var(--color-section-tint)", color: "var(--color-brand-primary)" }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
@@ -413,8 +433,8 @@ export default function Home() {
               Ne nous croyez pas sur parole — découvrez les retours des équipes avec lesquelles nous avons travaillé.
             </p>
           </div>
-          <div className="relative pl-8">
-            <span className="absolute left-0 top-0 text-8xl font-serif opacity-20" style={{ color: "var(--color-brand-primary)" }}>&ldquo;</span>
+          <div className="relative pl-4 sm:pl-8">
+            <span className="absolute left-0 top-0 text-6xl sm:text-8xl font-serif opacity-20" style={{ color: "var(--color-brand-primary)" }}>&ldquo;</span>
             <blockquote className="text-[var(--color-text-body)] italic mb-6" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-body)" }}>
               Travailler avec Nodes Technologie a été un tournant. Leur IA conversationnelle (AYA, assistants virtuels) a transformé notre relation client et nos campagnes commerciales. Une équipe de pointe en IA au Congo.
             </blockquote>
@@ -429,9 +449,9 @@ export default function Home() {
             </div>
           </div>
         </div>
-        <div className="max-w-4xl mx-auto mt-16 flex flex-wrap justify-center items-center gap-8 lg:gap-12">
+        <div className="max-w-4xl mx-auto mt-10 sm:mt-16 flex flex-wrap justify-center items-center gap-4 sm:gap-6 lg:gap-12">
           {CLIENT_LOGOS.map((name) => (
-            <span key={name} className="text-[var(--color-link-text)] font-[var(--font-weight-medium)] text-lg" style={{ fontFamily: "var(--font-family-sans)" }}>{name}</span>
+            <span key={name} className="text-[var(--color-link-text)] font-[var(--font-weight-medium)] text-sm sm:text-base lg:text-lg" style={{ fontFamily: "var(--font-family-sans)" }}>{name}</span>
           ))}
         </div>
       </section>
@@ -442,7 +462,7 @@ export default function Home() {
           Prêt ? Lancez votre activité
         </h2>
         <a
-          href="#get-started"
+          href="#contact"
           className="inline-flex items-center justify-center rounded-[var(--border-radius-button)] px-8 py-4 text-white font-[var(--font-weight-medium)] text-lg transition-colors hover:opacity-90"
           style={{ backgroundColor: "var(--color-button-primary-bg)", fontFamily: "var(--font-family-sans)" }}
         >
@@ -451,10 +471,10 @@ export default function Home() {
       </section>
 
       {/* Footer */}
-      <footer className="py-16 px-[var(--padding-section-x)] text-white" style={{ background: "var(--color-footer-bg)" }}>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8">
+      <footer id="contact" className="py-12 sm:py-16 px-[var(--padding-section-x)] text-white" style={{ background: "var(--color-footer-bg)" }}>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 lg:gap-8">
           <div className="lg:col-span-1">
-            <a href="#" className="text-xl font-[var(--font-weight-bold)] text-white" style={{ fontFamily: "var(--font-family-sans)" }}>Nodes Technologie</a>
+            <a href="#hero" className="text-xl font-[var(--font-weight-bold)] text-white" style={{ fontFamily: "var(--font-family-sans)" }}>Nodes Technologie</a>
             <p className="mt-4 text-white/90 text-[var(--font-size-small)]" style={{ fontFamily: "var(--font-family-sans)" }}>
               Entreprise congolaise spécialisée en intelligence artificielle et automatisation. Notre mission : repousser les frontières de l&apos;innovation technologique et créer des solutions IA de pointe. Brazzaville, Congo. Fondée en 2023.
             </p>
@@ -503,7 +523,7 @@ export default function Home() {
             </form>
           </div>
         </div>
-        <div className="max-w-7xl mx-auto mt-12 pt-8 border-t border-white/20 flex flex-col sm:flex-row justify-between items-center gap-4 text-[var(--font-size-small)] text-white/80" style={{ fontFamily: "var(--font-family-sans)" }}>
+        <div className="max-w-7xl mx-auto mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-white/20 flex flex-col sm:flex-row justify-between items-center gap-4 text-[var(--font-size-small)] text-white/80 text-center sm:text-left" style={{ fontFamily: "var(--font-family-sans)" }}>
           <p>© 2023 Nodes Technologie. Tous droits réservés.</p>
           <div className="flex gap-6">
             <a href="#" className="hover:text-white transition-colors">Mentions légales</a>
