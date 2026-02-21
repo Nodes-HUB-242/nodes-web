@@ -103,12 +103,16 @@ export default function Home() {
             boxShadow: "var(--shadow-nav-elevated)",
           }}
         >
-          <a href="#hero" className="flex items-center gap-2.5" style={{ fontFamily: "var(--font-family-sans)" }}>
-            <span className="flex items-center justify-center w-9 h-9 rounded-xl shrink-0 bg-[var(--color-brand-primary)] text-white">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 2L2 7l10 5 10-5-10-5z" /><path d="M2 17l10 5 10-5" /></svg>
-            </span>
-            <span className="text-lg font-[var(--font-weight-extrabold)] tracking-tight text-[var(--color-text-heading)]">Nodes</span>
-            <span className="text-sm font-[var(--font-weight-medium)] text-[var(--color-link-text)] hidden sm:inline">Technologie</span>
+          <a href="#hero" className="flex items-center gap-2 shrink-0">
+            <Image
+              src="/nodes png.png"
+              alt="Nodes Technologie"
+              width={36}
+              height={36}
+              className="w-9 h-9 rounded-lg object-contain"
+            />
+            <span className="text-lg font-[var(--font-weight-extrabold)] tracking-tight text-[var(--color-text-heading)]" style={{ fontFamily: "var(--font-family-sans)" }}>Nodes</span>
+            <span className="text-sm font-[var(--font-weight-medium)] text-[var(--color-link-text)] hidden sm:inline" style={{ fontFamily: "var(--font-family-sans)" }}>Technologie</span>
           </a>
           <nav className="hidden md:flex items-center gap-8">
             {NAV_LINKS.map((link, i) => (
@@ -188,14 +192,14 @@ export default function Home() {
             }}
           />
         </div>
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-[var(--padding-section-x)] py-[var(--padding-section-y)]">
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-[var(--padding-section-x)] py-8 sm:py-12 lg:py-[var(--padding-section-y)]">
           <div className="max-w-2xl">
-            <p className="uppercase tracking-[var(--letter-spacing-expanded)] font-[var(--font-weight-medium)] text-[var(--font-size-tagline)] mb-4 text-white/90" style={{ fontFamily: "var(--font-family-sans)" }}>
+            <p className="uppercase tracking-[var(--letter-spacing-expanded)] font-[var(--font-weight-medium)] text-xs sm:text-[var(--font-size-tagline)] mb-3 sm:mb-4 text-white/90" style={{ fontFamily: "var(--font-family-sans)" }}>
               Nous sommes une équipe d&apos;experts
             </p>
             <h1
-              className="font-[var(--font-weight-extrabold)] leading-[1.12] text-white"
-              style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-1)" }}
+              className="font-[var(--font-weight-extrabold)] leading-[1.12] text-white text-2xl sm:text-3xl lg:text-[length:var(--font-size-heading-1)]"
+              style={{ fontFamily: "var(--font-family-sans)" }}
             >
               Nous créons des produits qui rendent la{" "}
               <span className="relative inline-block">
@@ -250,7 +254,7 @@ export default function Home() {
               EN SAVOIR PLUS
             </a>
           </div>
-          <div className="grid sm:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
             {SERVICES.map((s) => (
               <div key={s.title} className="p-4 sm:p-6 rounded-xl bg-white shadow-sm border border-[var(--color-border-light)]">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: "var(--color-section-tint)", color: "var(--color-brand-primary)" }}>
@@ -277,16 +281,16 @@ export default function Home() {
             <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-4" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
               Une équipe d&apos;experts au service de l&apos;IA
             </h2>
-            <p className="text-[var(--color-text-body)] mb-8" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-body)" }}>
+            <p className="text-[var(--color-text-body)] mb-6 sm:mb-8 text-sm sm:text-base" style={{ fontFamily: "var(--font-family-sans)" }}>
               Nodes Technology est une entreprise congolaise basée à Brazzaville. Nous développons des solutions d&apos;intelligence artificielle et d&apos;automatisation pour les entreprises (télécoms, assurance, finance) et formons la nouvelle génération via BASE64.
             </p>
             <div className="grid grid-cols-2 gap-3 sm:gap-4">
               {TEAM_FEATURES.map((f) => (
                 <div key={f.label} className="flex items-center gap-3">
-                  <div className="w-10 h-10 rounded-full flex items-center justify-center" style={{ backgroundColor: "var(--color-brand-primary)", color: "white" }}>
-                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
+                  <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shrink-0" style={{ backgroundColor: "var(--color-brand-primary)", color: "white" }}>
+                    <svg className="w-4 h-4 sm:w-[18px] sm:h-[18px]" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12" /></svg>
                   </div>
-                  <span className="font-[var(--font-weight-medium)] text-[var(--color-text-heading)]" style={{ fontFamily: "var(--font-family-sans)" }}>{f.label}</span>
+                  <span className="font-[var(--font-weight-medium)] text-[var(--color-text-heading)] text-sm sm:text-base" style={{ fontFamily: "var(--font-family-sans)" }}>{f.label}</span>
                 </div>
               ))}
             </div>
@@ -297,10 +301,10 @@ export default function Home() {
       {/* Process */}
       <section id="process" className="py-[var(--padding-section-y)] px-[var(--padding-section-x)]" style={{ background: "var(--color-background-white)" }}>
         <div className="max-w-7xl mx-auto">
-          <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-12 text-center" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
+          <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-8 sm:mb-12 text-center" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
             Notre processus métier
           </h2>
-          <div className="grid lg:grid-cols-2 gap-12 items-center">
+          <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
             <div className="space-y-6 sm:space-y-8 order-1 lg:order-none">
               {PROCESS_STEPS.map((step) => (
                 <div key={step.num} className="flex gap-4 sm:gap-6">
@@ -312,7 +316,7 @@ export default function Home() {
                 </div>
               ))}
             </div>
-            <div className="relative aspect-[4/3] rounded-2xl overflow-hidden">
+            <div className="relative aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden">
               <Image src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80" alt="Collaboration" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
             </div>
           </div>
@@ -329,7 +333,7 @@ export default function Home() {
             <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-4" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
               Nos projets créatifs récents
             </h2>
-            <p className="text-[var(--color-text-body)] max-w-2xl mx-auto" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-body)" }}>
+            <p className="text-[var(--color-text-body)] max-w-2xl mx-auto text-sm sm:text-base" style={{ fontFamily: "var(--font-family-sans)" }}>
               Une sélection de réalisations livrées pour nos clients : branding, digital et stratégie.
             </p>
           </div>
@@ -407,7 +411,7 @@ export default function Home() {
             </div>
           </div>
 
-          <div className="text-center mt-10">
+          <div className="text-center mt-8 sm:mt-10">
             <a
               href="#projects"
               className="inline-flex items-center justify-center rounded-[var(--border-radius-button)] px-5 py-3 sm:px-6 sm:py-3.5 text-white text-sm sm:text-base font-[var(--font-weight-medium)] transition-all duration-200 hover:opacity-90 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[var(--color-button-primary-bg)]"
@@ -435,12 +439,12 @@ export default function Home() {
           </div>
           <div className="relative pl-4 sm:pl-8">
             <span className="absolute left-0 top-0 text-6xl sm:text-8xl font-serif opacity-20" style={{ color: "var(--color-brand-primary)" }}>&ldquo;</span>
-            <blockquote className="text-[var(--color-text-body)] italic mb-6" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-body)" }}>
+            <blockquote className="text-[var(--color-text-body)] italic mb-4 sm:mb-6 text-sm sm:text-base" style={{ fontFamily: "var(--font-family-sans)" }}>
               Travailler avec Nodes Technologie a été un tournant. Leur IA conversationnelle (AYA, assistants virtuels) a transformé notre relation client et nos campagnes commerciales. Une équipe de pointe en IA au Congo.
             </blockquote>
             <div className="flex items-center gap-4">
-              <div className="relative w-14 h-14 rounded-full overflow-hidden shrink-0">
-                <Image src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" alt="Jessica Brown" width={56} height={56} className="object-cover" />
+              <div className="relative w-11 h-11 sm:w-14 sm:h-14 rounded-full overflow-hidden shrink-0">
+                <Image src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&q=80" alt="Jessica Brown" fill className="object-cover" />
               </div>
               <div>
                 <p className="font-[var(--font-weight-bold)] text-[var(--color-text-heading)]" style={{ fontFamily: "var(--font-family-sans)" }}>Jessica Brown</p>
@@ -457,13 +461,13 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="py-20 px-[var(--padding-section-x)] text-center" style={{ background: "var(--color-section-tint)" }}>
-        <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-6" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
+      <section className="py-12 sm:py-16 lg:py-20 px-[var(--padding-section-x)] text-center" style={{ background: "var(--color-section-tint)" }}>
+        <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-4 sm:mb-6" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
           Prêt ? Lancez votre activité
         </h2>
         <a
           href="#contact"
-          className="inline-flex items-center justify-center rounded-[var(--border-radius-button)] px-8 py-4 text-white font-[var(--font-weight-medium)] text-lg transition-colors hover:opacity-90"
+          className="inline-flex items-center justify-center rounded-[var(--border-radius-button)] px-6 py-3 sm:px-8 sm:py-4 text-white font-[var(--font-weight-medium)] text-base sm:text-lg transition-colors hover:opacity-90"
           style={{ backgroundColor: "var(--color-button-primary-bg)", fontFamily: "var(--font-family-sans)" }}
         >
           COMMENCER
@@ -473,9 +477,9 @@ export default function Home() {
       {/* Footer */}
       <footer id="contact" className="py-12 sm:py-16 px-[var(--padding-section-x)] text-white" style={{ background: "var(--color-footer-bg)" }}>
         <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 lg:gap-8">
-          <div className="lg:col-span-1">
-            <a href="#hero" className="text-xl font-[var(--font-weight-bold)] text-white" style={{ fontFamily: "var(--font-family-sans)" }}>Nodes Technologie</a>
-            <p className="mt-4 text-white/90 text-[var(--font-size-small)]" style={{ fontFamily: "var(--font-family-sans)" }}>
+          <div className="sm:col-span-2 lg:col-span-1">
+            <a href="#hero" className="text-lg sm:text-xl font-[var(--font-weight-bold)] text-white" style={{ fontFamily: "var(--font-family-sans)" }}>Nodes Technologie</a>
+            <p className="mt-3 sm:mt-4 text-white/90 text-xs sm:text-[var(--font-size-small)] leading-relaxed" style={{ fontFamily: "var(--font-family-sans)" }}>
               Entreprise congolaise spécialisée en intelligence artificielle et automatisation. Notre mission : repousser les frontières de l&apos;innovation technologique et créer des solutions IA de pointe. Brazzaville, Congo. Fondée en 2023.
             </p>
             <div className="flex gap-4 mt-6">
@@ -485,39 +489,39 @@ export default function Home() {
             </div>
           </div>
           <div>
-            <h3 className="uppercase tracking-[var(--letter-spacing-expanded)] font-[var(--font-weight-bold)] text-[var(--font-size-tagline)] mb-4" style={{ fontFamily: "var(--font-family-sans)" }}>NOS SERVICES</h3>
-            <ul className="space-y-2 text-white/90 text-[var(--font-size-small)]" style={{ fontFamily: "var(--font-family-sans)" }}>
+            <h3 className="uppercase tracking-[var(--letter-spacing-expanded)] font-[var(--font-weight-bold)] text-xs sm:text-[var(--font-size-tagline)] mb-3 sm:mb-4" style={{ fontFamily: "var(--font-family-sans)" }}>NOS SERVICES</h3>
+            <ul className="space-y-1.5 sm:space-y-2 text-white/90 text-xs sm:text-[var(--font-size-small)]" style={{ fontFamily: "var(--font-family-sans)" }}>
               {FOOTER_SERVICES.map((item) => (
                 <li key={item}><a href="#" className="hover:text-white transition-colors">{item}</a></li>
               ))}
             </ul>
           </div>
           <div>
-            <h3 className="uppercase tracking-[var(--letter-spacing-expanded)] font-[var(--font-weight-bold)] text-[var(--font-size-tagline)] mb-4" style={{ fontFamily: "var(--font-family-sans)" }}>LIENS UTILES</h3>
-            <ul className="space-y-2 text-white/90 text-[var(--font-size-small)]" style={{ fontFamily: "var(--font-family-sans)" }}>
+            <h3 className="uppercase tracking-[var(--letter-spacing-expanded)] font-[var(--font-weight-bold)] text-xs sm:text-[var(--font-size-tagline)] mb-3 sm:mb-4" style={{ fontFamily: "var(--font-family-sans)" }}>LIENS UTILES</h3>
+            <ul className="space-y-1.5 sm:space-y-2 text-white/90 text-xs sm:text-[var(--font-size-small)]" style={{ fontFamily: "var(--font-family-sans)" }}>
               {FOOTER_LINKS.map((item) => (
                 <li key={item}><a href="#" className="hover:text-white transition-colors">{item}</a></li>
               ))}
             </ul>
           </div>
           <div>
-            <h3 className="uppercase tracking-[var(--letter-spacing-expanded)] font-[var(--font-weight-bold)] text-[var(--font-size-tagline)] mb-4" style={{ fontFamily: "var(--font-family-sans)" }}>Nous contacter</h3>
-            <p className="text-white/90 text-[var(--font-size-small)]" style={{ fontFamily: "var(--font-family-sans)" }}>
-              Brazzaville, Brazzaville<br />Congo<br />+242 06 529 05 97<br />+242 05 659 11 59<br /><a href="mailto:hello@nodestechnologie.com" className="hover:text-white transition-colors">hello@nodestechnologie.com</a>
+            <h3 className="uppercase tracking-[var(--letter-spacing-expanded)] font-[var(--font-weight-bold)] text-xs sm:text-[var(--font-size-tagline)] mb-3 sm:mb-4" style={{ fontFamily: "var(--font-family-sans)" }}>Nous contacter</h3>
+            <p className="text-white/90 text-xs sm:text-[var(--font-size-small)] leading-relaxed" style={{ fontFamily: "var(--font-family-sans)" }}>
+              Brazzaville, Brazzaville<br />Congo<br />+242 06 529 05 97<br />+242 05 659 11 59<br /><a href="mailto:hello@nodestechnologie.com" className="hover:text-white transition-colors break-all sm:break-normal">hello@nodestechnologie.com</a>
             </p>
           </div>
           <div>
-            <h3 className="uppercase tracking-[var(--letter-spacing-expanded)] font-[var(--font-weight-bold)] text-[var(--font-size-tagline)] mb-4" style={{ fontFamily: "var(--font-family-sans)" }}>NEWSLETTER</h3>
-            <form onSubmit={(e) => e.preventDefault()} className="flex gap-2">
+            <h3 className="uppercase tracking-[var(--letter-spacing-expanded)] font-[var(--font-weight-bold)] text-xs sm:text-[var(--font-size-tagline)] mb-3 sm:mb-4" style={{ fontFamily: "var(--font-family-sans)" }}>NEWSLETTER</h3>
+            <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row gap-2">
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Votre email"
-                className="flex-1 min-w-0 px-4 py-2.5 rounded-[var(--border-radius-button)] text-[var(--color-text-heading)] placeholder:text-[var(--color-link-text)] focus:outline-none focus:ring-2 focus:ring-white"
+                className="flex-1 min-w-0 px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base rounded-[var(--border-radius-button)] text-[var(--color-text-heading)] placeholder:text-[var(--color-link-text)] focus:outline-none focus:ring-2 focus:ring-white"
                 style={{ fontFamily: "var(--font-family-sans)" }}
               />
-              <button type="submit" className="shrink-0 px-4 py-2.5 rounded-[var(--border-radius-button)] bg-white text-[var(--color-footer-bg)] font-[var(--font-weight-medium)] hover:bg-white/90 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[var(--color-footer-bg)]" style={{ fontFamily: "var(--font-family-sans)" }}>
+              <button type="submit" className="shrink-0 px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base rounded-[var(--border-radius-button)] bg-white text-[var(--color-footer-bg)] font-[var(--font-weight-medium)] hover:bg-white/90 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[var(--color-footer-bg)]" style={{ fontFamily: "var(--font-family-sans)" }}>
                 S&apos;INSCRIRE
               </button>
             </form>
