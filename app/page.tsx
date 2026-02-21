@@ -111,8 +111,10 @@ export default function Home() {
               height={36}
               className="w-9 h-9 rounded-lg object-contain"
             />
-            <span className="text-lg font-[var(--font-weight-extrabold)] tracking-tight text-[var(--color-text-heading)]" style={{ fontFamily: "var(--font-family-sans)" }}>Nodes</span>
-            <span className="text-xs sm:text-sm font-[var(--font-weight-medium)] text-[var(--color-link-text)]" style={{ fontFamily: "var(--font-family-sans)" }}>Technologie</span>
+            <div className="flex flex-col leading-tight">
+              <span className="text-base sm:text-lg font-[var(--font-weight-extrabold)] tracking-tight text-[var(--color-text-heading)]" style={{ fontFamily: "var(--font-family-sans)" }}>Nodes</span>
+              <span className="text-[10px] sm:text-xs font-[var(--font-weight-medium)] text-[var(--color-link-text)] -mt-0.5" style={{ fontFamily: "var(--font-family-sans)" }}>Technologie</span>
+            </div>
           </a>
           <nav className="hidden md:flex items-center gap-8">
             {NAV_LINKS.map((link, i) => (
