@@ -3,6 +3,32 @@
 import Image from "next/image";
 import { useState, useRef, useCallback, useEffect } from "react";
 
+function AnimateOnScroll({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [visible, setVisible] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          setTimeout(() => setVisible(true), delay);
+        }
+      },
+      { threshold: 0.1, rootMargin: "0px 0px -40px 0px" }
+    );
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [delay]);
+
+  return (
+    <div ref={ref} className={`animate-on-scroll ${visible ? "visible" : ""} ${className}`}>
+      {children}
+    </div>
+  );
+}
+
 const NAV_LINKS = [
   { label: "Accueil", href: "#hero" },
   { label: "Services", href: "#services" },
@@ -47,18 +73,21 @@ const FOOTER_LINKS = ["À propos", "Notre équipe", "Tarifs", "Actualités", "No
 
 const CARD_WIDTH_DESKTOP = 320;
 const CARD_WIDTH_MOBILE = 280;
+const CARD_WIDTH_XS = 260;
 const CARD_GAP_DESKTOP = 24;
 const CARD_GAP_MOBILE = 16;
+const CARD_GAP_XS = 12;
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [email, setEmail] = useState("");
   const [projectIndex, setProjectIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(true);
+  const [isXSmall, setIsXSmall] = useState(true);
   const projectsRef = useRef<HTMLDivElement>(null);
 
-  const cardWidth = isMobile ? CARD_WIDTH_MOBILE : CARD_WIDTH_DESKTOP;
-  const cardGap = isMobile ? CARD_GAP_MOBILE : CARD_GAP_DESKTOP;
+  const cardWidth = !isMobile ? CARD_WIDTH_DESKTOP : isXSmall ? CARD_WIDTH_XS : CARD_WIDTH_MOBILE;
+  const cardGap = !isMobile ? CARD_GAP_DESKTOP : isXSmall ? CARD_GAP_XS : CARD_GAP_MOBILE;
 
   const scrollProjects = useCallback((direction: "prev" | "next") => {
     const el = projectsRef.current;
@@ -83,19 +112,27 @@ export default function Home() {
   }, [cardWidth, cardGap]);
 
   useEffect(() => {
-    const mq = window.matchMedia("(min-width: 640px)");
-    const update = () => setIsMobile(!mq.matches);
+    const mqMobile = window.matchMedia("(min-width: 640px)");
+    const mqXSmall = window.matchMedia("(max-width: 359px)");
+    const update = () => {
+      setIsMobile(!mqMobile.matches);
+      setIsXSmall(mqXSmall.matches);
+    };
     update();
-    mq.addEventListener("change", update);
-    return () => mq.removeEventListener("change", update);
+    mqMobile.addEventListener("change", update);
+    mqXSmall.addEventListener("change", update);
+    return () => {
+      mqMobile.removeEventListener("change", update);
+      mqXSmall.removeEventListener("change", update);
+    };
   }, []);
 
   return (
     <>
       {/* Navbar professionnelle – glassmorphism, barre flottante */}
-      <header className="fixed top-0 left-0 right-0 z-50 px-3 pt-3 sm:px-4 sm:pt-4 lg:px-6 lg:pt-6">
+      <header className="fixed top-0 left-0 right-0 z-50 px-2 min-[360px]:px-3 sm:px-4 lg:px-6" style={{ paddingTop: "max(0.5rem, env(safe-area-inset-top))" }}>
         <div
-          className="max-w-6xl mx-auto flex items-center justify-between rounded-xl sm:rounded-2xl px-4 py-3 sm:px-5 sm:py-3.5 lg:px-8 lg:py-4 border border-white/60 transition-all duration-300"
+          className="max-w-6xl mx-auto flex items-center justify-between rounded-lg min-[360px]:rounded-xl sm:rounded-2xl px-3 py-2.5 min-[360px]:px-4 min-[360px]:py-3 sm:px-5 sm:py-3.5 lg:px-8 lg:py-4 border border-white/60 transition-all duration-300"
           style={{
             background: "rgba(255, 255, 255, 0.82)",
             backdropFilter: "blur(12px)",
@@ -109,11 +146,11 @@ export default function Home() {
               alt="Nodes Technologie"
               width={36}
               height={36}
-              className="w-9 h-9 rounded-lg object-contain"
+              className="w-7 h-7 min-[360px]:w-8 min-[360px]:h-8 sm:w-9 sm:h-9 rounded-lg object-contain"
             />
             <div className="flex flex-col leading-tight">
-              <span className="text-base sm:text-lg font-[var(--font-weight-extrabold)] tracking-tight text-[var(--color-text-heading)]" style={{ fontFamily: "var(--font-family-sans)" }}>Nodes</span>
-              <span className="text-[10px] sm:text-xs font-[var(--font-weight-medium)] text-[var(--color-link-text)] -mt-0.5" style={{ fontFamily: "var(--font-family-sans)" }}>Technologie</span>
+              <span className="text-sm min-[360px]:text-base sm:text-lg font-[var(--font-weight-extrabold)] tracking-tight text-[var(--color-text-heading)]" style={{ fontFamily: "var(--font-family-sans)" }}>Nodes</span>
+              <span className="text-[9px] min-[360px]:text-[10px] sm:text-xs font-[var(--font-weight-medium)] text-[var(--color-link-text)] -mt-0.5" style={{ fontFamily: "var(--font-family-sans)" }}>Technologie</span>
             </div>
           </a>
           <nav className="hidden md:flex items-center gap-8">
@@ -158,7 +195,7 @@ export default function Home() {
         </div>
         {mobileMenuOpen && (
           <>
-            <div className="md:hidden fixed inset-0 top-[4.5rem] sm:top-[5.5rem] bg-black/20 backdrop-blur-sm z-40" aria-hidden onClick={() => setMobileMenuOpen(false)} />
+            <div className="md:hidden fixed inset-0 top-[3.75rem] min-[360px]:top-[4.5rem] sm:top-[5.5rem] bg-black/20 backdrop-blur-sm z-40" aria-hidden onClick={() => setMobileMenuOpen(false)} />
             <div
               className="md:hidden absolute left-4 right-4 mt-3 rounded-2xl border border-[var(--color-border-light)] p-5 z-50 flex flex-col gap-1"
               style={{ background: "rgba(255,255,255,0.95)", backdropFilter: "blur(12px)", boxShadow: "var(--shadow-nav-elevated)" }}
@@ -177,7 +214,7 @@ export default function Home() {
       </header>
 
       {/* Hero */}
-      <section id="hero" className="relative min-h-[100svh] min-h-screen flex items-center pt-24 pb-12 sm:pt-28 sm:pb-16 lg:pt-0 lg:pb-0">
+      <section id="hero" className="relative min-h-[100svh] min-h-screen flex items-center pt-20 min-[360px]:pt-24 pb-10 min-[360px]:pb-12 sm:pt-28 sm:pb-16 lg:pt-0 lg:pb-0">
         <div className="absolute inset-0">
           <Image
             src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=1920&q=85"
@@ -194,13 +231,13 @@ export default function Home() {
             }}
           />
         </div>
-        <div className="relative z-10 w-full max-w-7xl mx-auto px-[var(--padding-section-x)] py-8 sm:py-12 lg:py-[var(--padding-section-y)]">
-          <div className="max-w-2xl">
-            <p className="uppercase tracking-[var(--letter-spacing-expanded)] font-[var(--font-weight-medium)] text-xs sm:text-[var(--font-size-tagline)] mb-3 sm:mb-4 text-white/90" style={{ fontFamily: "var(--font-family-sans)" }}>
+        <div className="relative z-10 w-full max-w-7xl mx-auto px-[var(--padding-section-x)] py-6 min-[360px]:py-8 sm:py-12 lg:py-[var(--padding-section-y)]">
+          <AnimateOnScroll className="max-w-2xl">
+            <p className="uppercase tracking-[var(--letter-spacing-expanded)] font-[var(--font-weight-medium)] text-[10px] min-[360px]:text-xs sm:text-[var(--font-size-tagline)] mb-2 min-[360px]:mb-3 sm:mb-4 text-white/90" style={{ fontFamily: "var(--font-family-sans)" }}>
               Nous sommes une équipe d&apos;experts
             </p>
             <h1
-              className="font-[var(--font-weight-extrabold)] leading-[1.12] text-white text-2xl sm:text-3xl lg:text-[length:var(--font-size-heading-1)]"
+              className="font-[var(--font-weight-extrabold)] leading-[1.12] text-white text-xl min-[360px]:text-2xl sm:text-3xl lg:text-[length:var(--font-size-heading-1)]"
               style={{ fontFamily: "var(--font-family-sans)" }}
             >
               Nous créons des produits qui rendent la{" "}
@@ -210,14 +247,14 @@ export default function Home() {
               </span>{" "}
               des gens plus simple et meilleure.
             </h1>
-            <div className="w-12 sm:w-16 h-0.5 mt-4 mb-4 sm:mt-5 sm:mb-5 rounded-full bg-[var(--color-brand-primary)]" aria-hidden />
-            <p className="text-white/85 mb-6 sm:mb-8 max-w-lg leading-relaxed text-sm sm:text-base" style={{ fontFamily: "var(--font-family-sans)" }}>
+            <div className="w-10 min-[360px]:w-12 sm:w-16 h-0.5 mt-3 mb-3 min-[360px]:mt-4 min-[360px]:mb-4 sm:mt-5 sm:mb-5 rounded-full bg-[var(--color-brand-primary)]" aria-hidden />
+            <p className="text-white/85 mb-4 min-[360px]:mb-6 sm:mb-8 max-w-lg leading-relaxed text-xs min-[360px]:text-sm sm:text-base" style={{ fontFamily: "var(--font-family-sans)" }}>
               Spécialistes en intelligence artificielle et automatisation, nous aidons les leaders à construire des équipes à fort impact. Notre mission : repousser les frontières de l&apos;innovation technologique.
             </p>
-            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-3 sm:gap-5">
+            <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 min-[360px]:gap-3 sm:gap-5">
               <a
                 href="#services"
-                className="inline-flex items-center justify-center gap-2 rounded-[var(--border-radius-button)] px-5 py-3 sm:px-6 sm:py-3.5 text-white text-sm sm:text-base font-[var(--font-weight-medium)] transition-all hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[var(--color-button-primary-bg)]"
+                className="inline-flex items-center justify-center gap-2 rounded-[var(--border-radius-button)] px-4 py-2.5 min-[360px]:px-5 min-[360px]:py-3 sm:px-6 sm:py-3.5 text-white text-xs min-[360px]:text-sm sm:text-base font-[var(--font-weight-medium)] transition-all hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[var(--color-button-primary-bg)]"
                 style={{ backgroundColor: "var(--color-button-primary-bg)", fontFamily: "var(--font-family-sans)", boxShadow: "0 4px 14px rgba(26, 0, 93, 0.35)" }}
               >
                 Travailler avec Nodes
@@ -231,13 +268,14 @@ export default function Home() {
                 Lire notre histoire
               </a>
             </div>
-          </div>
+          </AnimateOnScroll>
         </div>
       </section>
 
       {/* Services */}
       <section id="services" className="py-[var(--padding-section-y)] px-[var(--padding-section-x)]" style={{ background: "var(--color-section-muted)" }}>
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
+          <AnimateOnScroll>
           <div>
             <a href="#get-started" className="inline-block uppercase tracking-[var(--letter-spacing-expanded)] text-[var(--color-brand-primary)] font-[var(--font-weight-medium)] text-[var(--font-size-tagline)] mb-4" style={{ fontFamily: "var(--font-family-sans)" }}>
               COMMENCER
@@ -256,9 +294,11 @@ export default function Home() {
               EN SAVOIR PLUS
             </a>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          </AnimateOnScroll>
+          <AnimateOnScroll delay={150}>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 min-[360px]:gap-4 sm:gap-6">
             {SERVICES.map((s) => (
-              <div key={s.title} className="p-4 sm:p-6 rounded-xl bg-white shadow-sm border border-[var(--color-border-light)]">
+              <div key={s.title} className="p-3 min-[360px]:p-4 sm:p-6 rounded-lg min-[360px]:rounded-xl bg-white shadow-sm border border-[var(--color-border-light)]">
                 <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: "var(--color-section-tint)", color: "var(--color-brand-primary)" }}>
                   {s.icon === "gear" && <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="3" /><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42" /></svg>}
                   {s.icon === "chart" && <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M3 3v18h18" /><path d="m7 16 4-4 4 2 4-6" /></svg>}
@@ -270,16 +310,18 @@ export default function Home() {
               </div>
             ))}
           </div>
+          </AnimateOnScroll>
         </div>
       </section>
 
       {/* Team */}
       <section id="story" className="py-[var(--padding-section-y)] px-[var(--padding-section-x)]" style={{ background: "var(--color-section-tint)" }}>
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-          <div className="relative aspect-[4/5] max-h-[320px] sm:max-h-[400px] lg:max-h-[500px] rounded-xl sm:rounded-2xl overflow-hidden order-2 lg:order-1">
+          <AnimateOnScroll delay={100} className="relative aspect-[4/5] max-h-[260px] min-[360px]:max-h-[320px] sm:max-h-[400px] lg:max-h-[500px] rounded-lg min-[360px]:rounded-xl sm:rounded-2xl overflow-hidden order-2 lg:order-1">
             <Image src="https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=600&q=80" alt="Membre de l'équipe" fill className="object-cover object-top" sizes="(max-width: 1024px) 100vw, 50vw" />
-          </div>
-          <div className="order-1 lg:order-2">
+          </AnimateOnScroll>
+          <AnimateOnScroll className="order-1 lg:order-2">
+          <div>
             <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-4" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
               Une équipe d&apos;experts au service de l&apos;IA
             </h2>
@@ -297,17 +339,20 @@ export default function Home() {
               ))}
             </div>
           </div>
+          </AnimateOnScroll>
         </div>
       </section>
 
       {/* Process */}
       <section id="process" className="py-[var(--padding-section-y)] px-[var(--padding-section-x)]" style={{ background: "var(--color-background-white)" }}>
         <div className="max-w-7xl mx-auto">
+          <AnimateOnScroll>
           <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-8 sm:mb-12 text-center" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
             Notre processus métier
           </h2>
+          </AnimateOnScroll>
           <div className="grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
-            <div className="space-y-6 sm:space-y-8 order-1 lg:order-none">
+            <AnimateOnScroll delay={100} className="space-y-6 sm:space-y-8 order-1 lg:order-none">
               {PROCESS_STEPS.map((step) => (
                 <div key={step.num} className="flex gap-4 sm:gap-6">
                   <span className="text-3xl sm:text-4xl lg:text-5xl font-[var(--font-weight-extrabold)] shrink-0" style={{ color: "var(--color-section-tint)", fontFamily: "var(--font-family-sans)" }}>{step.num}</span>
@@ -317,10 +362,10 @@ export default function Home() {
                   </div>
                 </div>
               ))}
-            </div>
-            <div className="relative aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden">
+            </AnimateOnScroll>
+            <AnimateOnScroll delay={200} className="relative aspect-[4/3] rounded-xl sm:rounded-2xl overflow-hidden">
               <Image src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80" alt="Collaboration" fill className="object-cover" sizes="(max-width: 1024px) 100vw, 50vw" />
-            </div>
+            </AnimateOnScroll>
           </div>
         </div>
       </section>
@@ -328,6 +373,7 @@ export default function Home() {
       {/* Projects – slider UI/UX amélioré */}
       <section id="projects" className="py-[var(--padding-section-y)] px-[var(--padding-section-x)]" style={{ background: "var(--color-section-tint)" }}>
         <div className="max-w-7xl mx-auto">
+          <AnimateOnScroll>
           <div className="text-center mb-8 sm:mb-10">
             <span className="inline-block uppercase tracking-[var(--letter-spacing-expanded)] text-[var(--color-brand-primary)] font-[var(--font-weight-medium)] text-[var(--font-size-tagline)] mb-3" style={{ fontFamily: "var(--font-family-sans)" }}>
               Portfolio
@@ -339,7 +385,9 @@ export default function Home() {
               Une sélection de réalisations livrées pour nos clients : branding, digital et stratégie.
             </p>
           </div>
+          </AnimateOnScroll>
 
+          <AnimateOnScroll delay={150}>
           <div className="relative group/slider">
             <div className="absolute left-0 top-0 bottom-4 z-10 w-6 sm:w-12 md:w-16 bg-gradient-to-r from-[var(--color-section-tint)] to-transparent pointer-events-none" aria-hidden />
             <div className="absolute right-0 top-0 bottom-4 z-10 w-6 sm:w-12 md:w-16 bg-gradient-to-l from-[var(--color-section-tint)] to-transparent pointer-events-none" aria-hidden />
@@ -347,7 +395,7 @@ export default function Home() {
             <button
               type="button"
               onClick={() => scrollProjects("prev")}
-              className="absolute left-1 sm:left-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-lg border border-[var(--color-border-light)] flex items-center justify-center text-[var(--color-brand-primary)] transition-all hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2"
+              className="absolute left-0.5 min-[360px]:left-1 sm:left-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 min-[360px]:w-10 min-[360px]:h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-lg border border-[var(--color-border-light)] flex items-center justify-center text-[var(--color-brand-primary)] transition-all hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2"
               aria-label="Projet précédent"
             >
               <svg className="w-5 h-5 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M15 18l-6-6 6-6" /></svg>
@@ -355,7 +403,7 @@ export default function Home() {
             <button
               type="button"
               onClick={() => scrollProjects("next")}
-              className="absolute right-1 sm:right-0 top-1/2 -translate-y-1/2 z-20 w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-lg border border-[var(--color-border-light)] flex items-center justify-center text-[var(--color-brand-primary)] transition-all hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2"
+              className="absolute right-0.5 min-[360px]:right-1 sm:right-0 top-1/2 -translate-y-1/2 z-20 w-9 h-9 min-[360px]:w-10 min-[360px]:h-10 sm:w-12 sm:h-12 rounded-full bg-white shadow-lg border border-[var(--color-border-light)] flex items-center justify-center text-[var(--color-brand-primary)] transition-all hover:scale-105 hover:shadow-xl focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2"
               aria-label="Projet suivant"
             >
               <svg className="w-5 h-5 sm:w-5 sm:h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6" /></svg>
@@ -364,7 +412,7 @@ export default function Home() {
             <div
               ref={projectsRef}
               onScroll={handleProjectsScroll}
-              className="flex gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory py-2 pb-6 -mx-1 sm:-mx-2 px-2"
+              className="flex gap-3 min-[360px]:gap-4 sm:gap-6 overflow-x-auto scroll-smooth snap-x snap-mandatory py-2 pb-6 -mx-1 sm:-mx-2 px-2"
               style={{ scrollbarWidth: "none" }}
               role="region"
               aria-label="Carrousel de projets"
@@ -389,7 +437,7 @@ export default function Home() {
                       <p className="text-white/90 text-sm mt-0.5" style={{ fontFamily: "var(--font-family-sans)" }}>{slide.desc}</p>
                     </div>
                   </div>
-                  <div className="p-4">
+                  <div className="p-3 min-[360px]:p-4">
                     <h3 className="font-[var(--font-weight-bold)] text-[var(--color-text-heading)]" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-3)" }}>{slide.title}</h3>
                     <p className="text-[var(--color-link-text)] text-[var(--font-size-small)] mt-1" style={{ fontFamily: "var(--font-family-sans)" }}>{slide.desc}</p>
                   </div>
@@ -412,7 +460,9 @@ export default function Home() {
               ))}
             </div>
           </div>
+          </AnimateOnScroll>
 
+          <AnimateOnScroll delay={200}>
           <div className="text-center mt-8 sm:mt-10">
             <a
               href="#projects"
@@ -422,12 +472,14 @@ export default function Home() {
               VOIR TOUS LES PROJETS
             </a>
           </div>
+          </AnimateOnScroll>
         </div>
       </section>
 
       {/* Testimonials */}
       <section className="py-[var(--padding-section-y)] px-[var(--padding-section-x)]" style={{ background: "var(--color-background-white)" }}>
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 sm:gap-12 items-center">
+          <AnimateOnScroll>
           <div>
             <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4" style={{ backgroundColor: "var(--color-section-tint)", color: "var(--color-brand-primary)" }}>
               <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
@@ -439,6 +491,8 @@ export default function Home() {
               Ne nous croyez pas sur parole — découvrez les retours des équipes avec lesquelles nous avons travaillé.
             </p>
           </div>
+          </AnimateOnScroll>
+          <AnimateOnScroll delay={150}>
           <div className="relative pl-4 sm:pl-8">
             <span className="absolute left-0 top-0 text-6xl sm:text-8xl font-serif opacity-20" style={{ color: "var(--color-brand-primary)" }}>&ldquo;</span>
             <blockquote className="text-[var(--color-text-body)] italic mb-4 sm:mb-6 text-sm sm:text-base" style={{ fontFamily: "var(--font-family-sans)" }}>
@@ -454,16 +508,20 @@ export default function Home() {
               </div>
             </div>
           </div>
+          </AnimateOnScroll>
         </div>
+        <AnimateOnScroll delay={200}>
         <div className="max-w-4xl mx-auto mt-10 sm:mt-16 flex flex-wrap justify-center items-center gap-4 sm:gap-6 lg:gap-12">
           {CLIENT_LOGOS.map((name) => (
             <span key={name} className="text-[var(--color-link-text)] font-[var(--font-weight-medium)] text-sm sm:text-base lg:text-lg" style={{ fontFamily: "var(--font-family-sans)" }}>{name}</span>
           ))}
         </div>
+        </AnimateOnScroll>
       </section>
 
       {/* CTA */}
-      <section className="py-12 sm:py-16 lg:py-20 px-[var(--padding-section-x)] text-center" style={{ background: "var(--color-section-tint)" }}>
+      <section className="py-10 min-[360px]:py-12 sm:py-16 lg:py-20 px-[var(--padding-section-x)] text-center" style={{ background: "var(--color-section-tint)" }}>
+        <AnimateOnScroll>
         <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-4 sm:mb-6" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
           Prêt ? Lancez votre activité
         </h2>
@@ -474,11 +532,12 @@ export default function Home() {
         >
           COMMENCER
         </a>
+        </AnimateOnScroll>
       </section>
 
       {/* Footer */}
-      <footer id="contact" className="py-12 sm:py-16 px-[var(--padding-section-x)] text-white" style={{ background: "var(--color-footer-bg)" }}>
-        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-8 sm:gap-10 lg:gap-8">
+      <footer id="contact" className="py-10 min-[360px]:py-12 sm:py-16 px-[var(--padding-section-x)] text-white pb-[max(2.5rem,env(safe-area-inset-bottom))]" style={{ background: "var(--color-footer-bg)" }}>
+        <div className="max-w-7xl mx-auto grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-6 min-[360px]:gap-8 sm:gap-10 lg:gap-8">
           <div className="sm:col-span-2 lg:col-span-1">
             <a href="#hero" className="text-lg sm:text-xl font-[var(--font-weight-bold)] text-white" style={{ fontFamily: "var(--font-family-sans)" }}>Nodes Technologie</a>
             <p className="mt-3 sm:mt-4 text-white/90 text-xs sm:text-[var(--font-size-small)] leading-relaxed" style={{ fontFamily: "var(--font-family-sans)" }}>

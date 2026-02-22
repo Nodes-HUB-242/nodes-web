@@ -4,6 +4,7 @@ import "./globals.css";
 export const metadata: Metadata = {
   title: "Nodes Technologie | L'intelligence artificielle à votre service",
   description: "Nodes Technology est une entreprise congolaise spécialisée en intelligence artificielle et automatisation. Notre mission : repousser les frontières de l'innovation technologique et créer des solutions IA de pointe pour nos clients. Brazzaville, Congo.",
+  viewport: { width: "device-width", initialScale: 1, viewportFit: "cover" },
 };
 
 export default function RootLayout({

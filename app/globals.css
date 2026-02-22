@@ -33,9 +33,9 @@
   --line-height-heading: 1.2;
   --letter-spacing-expanded: 0.08em;
 
-  /* Spacing */
-  --padding-section-x: clamp(1rem, 4vw, 4rem);
-  --padding-section-y: clamp(2rem, 5vw, 4rem);
+  /* Spacing – adapté très petit mobile (320px) à desktop */
+  --padding-section-x: clamp(0.75rem, 3vw, 4rem);
+  --padding-section-y: clamp(1.5rem, 4vw, 4rem);
   --gap-button-link: 1.5rem;
   --padding-button-x: 1.5rem;
   --padding-button-y: 0.875rem;
@@ -78,15 +78,27 @@ body {
   font-family: var(--font-family-sans);
   color: var(--color-text-body);
   background: var(--color-background-white);
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
 }
-/* Marge de scroll pour éviter que la navbar fixe masque les sections */
+/* Marge de scroll – adapté selon hauteur navbar */
 [id="hero"],
 [id="services"],
 [id="story"],
 [id="process"],
 [id="projects"],
 [id="contact"] {
-  scroll-margin-top: 5rem;
+  scroll-margin-top: 4.5rem;
+}
+@media (min-width: 360px) {
+  [id="hero"],
+  [id="services"],
+  [id="story"],
+  [id="process"],
+  [id="projects"],
+  [id="contact"] {
+    scroll-margin-top: 5rem;
+  }
 }
 @media (min-width: 768px) {
   [id="hero"],
@@ -103,4 +115,33 @@ body {
 [data-slider]::-webkit-scrollbar,
 .overflow-x-auto::-webkit-scrollbar {
   display: none;
+}
+
+/* Animations d'apparition au scroll */
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes fade-in {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+.animate-fade-up {
+  animation: fade-up 0.6s ease-out forwards;
+}
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+.animate-on-scroll {
+  opacity: 0;
+  transform: translateY(28px);
+}
+.animate-on-scroll.visible {
+  animation: fade-up 0.6s ease-out forwards;
 }
