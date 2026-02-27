@@ -205,5 +205,5 @@ Ce projet m'a permis de consolider et d'approfondir plusieurs compétences :
 ---
 
 <p align="center">
-  <sub>Fait avec ❤️ à Brazzaville — © 2023 Nodes Technologie. Tous droits réservés.</sub>
+  <sub>Fait avec ❤️ à Tunis — © 2023 Nodes Technologie. Tous droits réservés.</sub>
 </p>
