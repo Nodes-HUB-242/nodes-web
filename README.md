@@ -21,6 +21,7 @@
 - [Installation](#-installation)
 - [Utilisation](#-utilisation)
 - [Architecture](#-architecture)
+- [API Contact](#-api-contact)
 - [Ce que j'ai appris](#-ce-que-jai-appris)
 - [Améliorations futures](#-améliorations-futures)
 - [Auteur / Contact](#-auteur--contact)
@@ -62,7 +63,8 @@ Les entreprises tech africaines manquent souvent d'une vitrine web professionnel
 | 📊 **Processus métier** | 3 étapes numérotées avec layout image/texte |
 | 🎠 **Slider projets** | Carrousel horizontal avec snap, dots de pagination, navigation clavier |
 | 💬 **Témoignages** | Citation client + logos partenaires |
-| 📩 **Newsletter** | Formulaire d'inscription email dans le footer |
+| 📝 **Formulaire de contact** | Page dédiée avec envoi des données vers WhatsApp via API |
+| 🛡️ **Dashboard admin** | Interface d'administration (stats, graphiques, déconnexion) |
 | 🎬 **Animations au scroll** | Apparition progressive (fade-up) via IntersectionObserver |
 | 📱 **Responsive complet** | Adapté de 320px à 2560px+ (5 breakpoints) |
 
@@ -76,6 +78,8 @@ Les entreprises tech africaines manquent souvent d'une vitrine web professionnel
 | **React** | 19.2 | Composants UI, hooks (useState, useRef, useCallback, useEffect) |
 | **TypeScript** | 5 | Typage statique et sécurité du code |
 | **Tailwind CSS** | 4 | Utility-first CSS, responsive design |
+| **Zod** | — | Validation des schémas (API) |
+| **Recharts** | 3.x | Graphiques du dashboard admin |
 | **CSS Variables** | — | Design system centralisé (couleurs, typo, espacements) |
 | **IntersectionObserver** | API native | Animations déclenchées au scroll |
 | **ESLint** | 9 | Qualité et cohérence du code |
@@ -101,7 +105,11 @@ cd nodes-web
 # 3. Installer les dépendances
 npm install
 
-# 4. Lancer le serveur de développement
+# 4. Configurer les variables d'environnement
+cp .env.example .env.local
+# Éditer .env.local et renseigner FLOW_API_KEY pour l'envoi WhatsApp
+
+# 5. Lancer le serveur de développement
 npm run dev
 ```
 
@@ -123,6 +131,7 @@ L'application est accessible sur **http://localhost:3000**
 - **Couleur principale** : modifier `--color-brand-primary` dans `app/globals.css`
 - **Contenu** : modifier les constantes (`SERVICES`, `PROJECT_SLIDES`, etc.) dans `app/page.tsx`
 - **Logo** : remplacer `public/nodes png.png`
+- **API WhatsApp** : configurer `FLOW_API_KEY` dans `.env.local`
 
 ---
 
@@ -131,14 +140,29 @@ L'application est accessible sur **http://localhost:3000**
 ```
 nodes-web/
 ├── app/
+│   ├── api/
+│   │   └── contact/
+│   │       └── route.ts     ← API POST contact (validation, rate limit, envoi WhatsApp)
+│   ├── admin/
+│   │   ├── layout.tsx       ← Layout admin (sidebar)
+│   │   └── page.tsx         ← Dashboard (graphiques, stats)
+│   ├── formulaire/
+│   │   └── page.tsx         ← Formulaire de contact (name, phone, objet)
 │   ├── globals.css          ← Design system (variables CSS, animations)
-│   ├── layout.tsx           ← Layout racine, metadata SEO, <html lang="fr">
-│   └── page.tsx             ← Page unique : composants + données
+│   ├── layout.tsx           ← Layout racine, metadata SEO
+│   └── page.tsx             ← Page d'accueil one-page
+├── components/
+│   └── admin/
+│       ├── Sidebar.tsx      ← Navigation latérale admin
+│       └── StatsCard.tsx    ← Cartes Satisfaction / Applications
+├── lib/
+│   └── rate-limit.ts        ← Rate limiting in-memory (5 req/min par IP)
 ├── public/
 │   └── nodes png.png        ← Logo de l'entreprise
-├── next.config.ts           ← Config Next.js (domaines images)
-├── postcss.config.mjs       ← PostCSS + Tailwind
-├── tsconfig.json            ← Configuration TypeScript
+├── .env.example             ← Variables d'environnement (FLOW_API_KEY)
+├── next.config.ts
+├── postcss.config.mjs
+├── tsconfig.json
 ├── package.json
 └── README.md
 ```
@@ -164,6 +188,61 @@ Le projet utilise un **système de tokens CSS** centralisé dans `:root` pour ga
 
 ---
 
+## 📡 API Contact
+
+### `POST /api/contact`
+
+Envoie les données du formulaire vers WhatsApp via l'API Flow.
+
+#### Corps de la requête (JSON)
+
+| Champ   | Type   | Validation       | Obligatoire |
+|---------|--------|------------------|-------------|
+| `name`  | string | min 2 caractères | Oui         |
+| `phone` | string | min 8 caractères | Oui         |
+| `objet` | string | —                | Oui         |
+
+L'`orderId` est généré automatiquement côté serveur (format `NODES-{timestamp}`).
+
+#### Exemple de requête
+
+```bash
+curl -X POST http://localhost:3000/api/contact \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Jean Dupont","phone":"+24206123456","objet":"Demande de devis"}'
+```
+
+#### Réponses
+
+| Code | Description                          |
+|------|--------------------------------------|
+| 200  | Succès — réponse de l'API Flow       |
+| 400  | Validation échouée (Zod)             |
+| 429  | Trop de requêtes (rate limit)        |
+| 500  | Erreur serveur ou clé API manquante  |
+
+#### Validation (Zod)
+
+- **name** : minimum 2 caractères
+- **phone** : minimum 8 caractères
+- **objet** : chaîne non vide
+
+#### Rate limiting
+
+- **Limite** : 5 requêtes par minute par IP
+- **Réponse 429** : `{ "error": "...", "retryAfter": 45 }`
+- **Headers** : `Retry-After`, `X-RateLimit-Remaining`
+
+#### Variables d'environnement
+
+| Variable     | Description                    |
+|--------------|--------------------------------|
+| `FLOW_API_KEY` | Clé API Flow (WhatsApp) — côté serveur uniquement |
+
+Voir `.env.example` pour le modèle.
+
+---
+
 ## 📚 Ce que j'ai appris
 
 Ce projet m'a permis de consolider et d'approfondir plusieurs compétences :
@@ -175,12 +254,13 @@ Ce projet m'a permis de consolider et d'approfondir plusieurs compétences :
 - **Accessibilité (a11y)** : intégrer les attributs ARIA, la navigation clavier et le support des encoches (`safe-area-inset`)
 - **Slider custom sans librairie** : construire un carrousel horizontal avec snap CSS, calcul dynamique des dimensions et gestion des événements scroll
 - **Tailwind CSS 4** : exploiter les nouvelles fonctionnalités de la dernière version majeure
+- **API Routes Next.js** : validation avec Zod, rate limiting, envoi vers API externe
 
 ---
 
 ## 🔮 Améliorations futures
 
-- [ ] Ajouter un **backend** (API routes Next.js) pour la newsletter et le formulaire de contact
+- [x] ~~Ajouter un backend (API routes) pour le formulaire de contact~~
 - [ ] Intégrer un **CMS headless** (Sanity / Strapi) pour gérer le contenu dynamiquement
 - [ ] Ajouter le **mode sombre** (dark mode) avec basculement automatique
 - [ ] Implémenter le **multi-langue** (français / anglais) avec next-intl
@@ -205,5 +285,5 @@ Ce projet m'a permis de consolider et d'approfondir plusieurs compétences :
 ---
 
 <p align="center">
-  <sub>Fait avec ❤️ à Tunis — © 2023 Nodes Technologie. Tous droits réservés.</sub>
+  <sub>Fait avec ❤️ à Brazzaville — © 2023 Nodes Technologie. Tous droits réservés.</sub>
 </p>

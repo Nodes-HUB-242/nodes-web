@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useState, useRef, useCallback, useEffect } from "react";
 
 function AnimateOnScroll({ children, className = "", delay = 0 }: { children: React.ReactNode; className?: string; delay?: number }) {
@@ -80,7 +81,6 @@ const CARD_GAP_XS = 12;
 
 export default function Home() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [email, setEmail] = useState("");
   const [projectIndex, setProjectIndex] = useState(0);
   const [isMobile, setIsMobile] = useState(true);
   const [isXSmall, setIsXSmall] = useState(true);
@@ -143,14 +143,14 @@ export default function Home() {
           <a href="#hero" className="flex items-center gap-2 shrink-0">
             <Image
               src="/nodes png.png"
-              alt="Nodes Technologie"
+              alt="Nodes technology"
               width={36}
               height={36}
               className="w-7 h-7 min-[360px]:w-8 min-[360px]:h-8 sm:w-9 sm:h-9 rounded-lg object-contain"
             />
             <div className="flex flex-col leading-tight">
               <span className="text-sm min-[360px]:text-base sm:text-lg font-[var(--font-weight-extrabold)] tracking-tight text-[var(--color-text-heading)]" style={{ fontFamily: "var(--font-family-sans)" }}>Nodes</span>
-              <span className="text-[9px] min-[360px]:text-[10px] sm:text-xs font-[var(--font-weight-medium)] text-[var(--color-link-text)] -mt-0.5" style={{ fontFamily: "var(--font-family-sans)" }}>Technologie</span>
+              <span className="text-[9px] min-[360px]:text-[10px] sm:text-xs font-[var(--font-weight-medium)] text-[var(--color-link-text)] -mt-0.5" style={{ fontFamily: "var(--font-family-sans)" }}>technology</span>
             </div>
           </a>
           <nav className="hidden md:flex items-center gap-8">
@@ -253,7 +253,7 @@ export default function Home() {
             </p>
             <div className="flex flex-col sm:flex-row flex-wrap items-stretch sm:items-center gap-2 min-[360px]:gap-3 sm:gap-5">
               <a
-                href="#services"
+                href="#contact"
                 className="inline-flex items-center justify-center gap-2 rounded-[var(--border-radius-button)] px-4 py-2.5 min-[360px]:px-5 min-[360px]:py-3 sm:px-6 sm:py-3.5 text-white text-xs min-[360px]:text-sm sm:text-base font-[var(--font-weight-medium)] transition-all hover:opacity-95 focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[var(--color-button-primary-bg)]"
                 style={{ backgroundColor: "var(--color-button-primary-bg)", fontFamily: "var(--font-family-sans)", boxShadow: "0 4px 14px rgba(26, 0, 93, 0.35)" }}
               >
@@ -277,9 +277,9 @@ export default function Home() {
         <div className="max-w-7xl mx-auto grid lg:grid-cols-2 gap-8 sm:gap-12 lg:gap-16 items-start">
           <AnimateOnScroll>
           <div>
-            <a href="#get-started" className="inline-block uppercase tracking-[var(--letter-spacing-expanded)] text-[var(--color-brand-primary)] font-[var(--font-weight-medium)] text-[var(--font-size-tagline)] mb-4" style={{ fontFamily: "var(--font-family-sans)" }}>
+            <Link href="/formulaire" className="inline-block uppercase tracking-[var(--letter-spacing-expanded)] text-[var(--color-brand-primary)] font-[var(--font-weight-medium)] text-[var(--font-size-tagline)] mb-4 hover:underline" style={{ fontFamily: "var(--font-family-sans)" }}>
               COMMENCER
-            </a>
+            </Link>
             <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-4" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
               Nous repoussons les frontières de l&apos;innovation technologique
             </h2>
@@ -525,13 +525,13 @@ export default function Home() {
         <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-4 sm:mb-6" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
           Prêt ? Lancez votre activité
         </h2>
-        <a
-          href="#contact"
+        <Link
+          href="/formulaire"
           className="inline-flex items-center justify-center rounded-[var(--border-radius-button)] px-6 py-3 sm:px-8 sm:py-4 text-white font-[var(--font-weight-medium)] text-base sm:text-lg transition-colors hover:opacity-90"
           style={{ backgroundColor: "var(--color-button-primary-bg)", fontFamily: "var(--font-family-sans)" }}
         >
           COMMENCER
-        </a>
+        </Link>
         </AnimateOnScroll>
       </section>
 
@@ -570,22 +570,6 @@ export default function Home() {
             <p className="text-white/90 text-xs sm:text-[var(--font-size-small)] leading-relaxed" style={{ fontFamily: "var(--font-family-sans)" }}>
               Brazzaville, Brazzaville<br />Congo<br />+242 06 529 05 97<br />+242 05 659 11 59<br /><a href="mailto:hello@nodestechnologie.com" className="hover:text-white transition-colors break-all sm:break-normal">hello@nodestechnologie.com</a>
             </p>
-          </div>
-          <div>
-            <h3 className="uppercase tracking-[var(--letter-spacing-expanded)] font-[var(--font-weight-bold)] text-xs sm:text-[var(--font-size-tagline)] mb-3 sm:mb-4" style={{ fontFamily: "var(--font-family-sans)" }}>NEWSLETTER</h3>
-            <form onSubmit={(e) => e.preventDefault()} className="flex flex-col sm:flex-row gap-2">
-              <input
-                type="email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                placeholder="Votre email"
-                className="flex-1 min-w-0 px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base rounded-[var(--border-radius-button)] text-[var(--color-text-heading)] placeholder:text-[var(--color-link-text)] focus:outline-none focus:ring-2 focus:ring-white"
-                style={{ fontFamily: "var(--font-family-sans)" }}
-              />
-              <button type="submit" className="shrink-0 px-3 py-2 sm:px-4 sm:py-2.5 text-sm sm:text-base rounded-[var(--border-radius-button)] bg-white text-[var(--color-footer-bg)] font-[var(--font-weight-medium)] hover:bg-white/90 transition-colors focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-[var(--color-footer-bg)]" style={{ fontFamily: "var(--font-family-sans)" }}>
-                S&apos;INSCRIRE
-              </button>
-            </form>
           </div>
         </div>
         <div className="max-w-7xl mx-auto mt-10 sm:mt-12 pt-6 sm:pt-8 border-t border-white/20 flex flex-col sm:flex-row justify-between items-center gap-4 text-[var(--font-size-small)] text-white/80 text-center sm:text-left" style={{ fontFamily: "var(--font-family-sans)" }}>
