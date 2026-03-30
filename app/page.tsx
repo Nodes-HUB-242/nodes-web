@@ -266,11 +266,14 @@ export default function Home() {
 
           <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-8 px-[var(--padding-section-x)] py-14 sm:py-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,420px)] lg:items-end">
             <AnimateOnScroll className="max-w-3xl">
-              <span className="eyebrow text-white before:bg-white/35">
+              <span
+                className="eyebrow text-white before:bg-white/35"
+                style={{ color: "#ffffff" }}
+              >
                 IA, automatisation et transformation digitale
               </span>
               <h1
-                className="hero-title mt-6 max-w-4xl text-[clamp(2.4rem,7vw,4.75rem)] font-[var(--font-weight-extrabold)] leading-[var(--line-height-heading)] text-white"
+                className="hero-title mt-6 max-w-4xl text-[clamp(2.4rem,7vw,44px)] font-[var(--font-weight-extrabold)] leading-[var(--line-height-heading)] text-white"
                 style={{
                   color: "#ffffff",
                   fontFamily: "var(--font-family-display)",
@@ -766,7 +769,10 @@ export default function Home() {
           </div>
 
           <div>
-            <h3 className="text-xs font-[var(--font-weight-bold)] uppercase tracking-[0.16em] text-white">
+            <h3
+              className="text-xs font-[var(--font-weight-bold)] uppercase tracking-[0.16em] text-white"
+              style={{ color: "#ffffff" }}
+            >
               Nos services
             </h3>
             <ul className="mt-4 space-y-3 text-sm text-white/84">
@@ -781,7 +787,10 @@ export default function Home() {
           </div>
 
           <div>
-            <h3 className="text-xs font-[var(--font-weight-bold)] uppercase tracking-[0.16em] text-white">
+            <h3
+              className="text-xs font-[var(--font-weight-bold)] uppercase tracking-[0.16em] text-white"
+              style={{ color: "#ffffff" }}
+            >
               Contact
             </h3>
             <div className="mt-4 flex flex-col items-start gap-3 text-sm leading-7 text-white/84">
