@@ -1,35 +1,96 @@
-"use client";
-
+import type { Metadata } from "next";
 import BackButton from "@/components/BackButton";
+import StructuredData from "@/components/StructuredData";
 import Link from "next/link";
-import { notFound, useParams } from "next/navigation";
+import { notFound } from "next/navigation";
+import {
+  buildBreadcrumbJsonLd,
+  buildCourseJsonLd,
+  buildMetadata,
+} from "@/lib/seo";
 import { DATA_MASTER_MODULES, DATA_MASTER_PARCOURS } from "../../data-master-data";
 
-export default function DataMasterParcoursPage() {
-  const params = useParams<{ id: string }>();
-  const parcours = DATA_MASTER_PARCOURS.find((p) => p.id === params.id);
+const AVAILABLE_PARCOURS = {
+  "1": {
+    date: "9 mai",
+    location: "Immeubles Perspectives d'Avenirs, Plateau, Brazzaville",
+    paymentUrl: "https://pay.yabetoo.com/p/p1TCYRaOTCZd",
+  },
+  "2": {
+    date: "8 mai",
+    location: "Immeubles Perspectives d'Avenirs, Plateau, Brazzaville",
+    paymentUrl: "https://pay.yabetoo.com/p/vr5Y8UgXuaeD",
+  },
+} as const;
+
+type PageProps = {
+  params: Promise<{ id: string }>;
+};
+
+export function generateStaticParams() {
+  return DATA_MASTER_PARCOURS.map((parcours) => ({ id: parcours.id }));
+}
+
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params;
+  const parcours = DATA_MASTER_PARCOURS.find((item) => item.id === id);
+
+  if (!parcours) {
+    return buildMetadata({
+      title: "Parcours introuvable",
+      description: "Le parcours demandé est introuvable.",
+      path: "/formations/data-master",
+      noIndex: true,
+    });
+  }
+
+  return buildMetadata({
+    title: `DATA MASTER - ${parcours.title}`,
+    description: `${parcours.title} dans DATA MASTER : ${parcours.who}`,
+    path: `/formations/data-master/parcours/${parcours.id}`,
+    keywords: ["DATA MASTER", parcours.title, "parcours data"],
+    image: "/DATA.jpg",
+  });
+}
+
+export default async function DataMasterParcoursPage({ params }: PageProps) {
+  const { id } = await params;
+  const parcours = DATA_MASTER_PARCOURS.find((item) => item.id === id);
   if (!parcours) notFound();
 
   const orderedModules = parcours.modules
-    .map((id) => DATA_MASTER_MODULES.find((m) => m.id === id))
+    .map((moduleId) => DATA_MASTER_MODULES.find((module) => module.id === moduleId))
     .filter(Boolean);
+  const session =
+    parcours.id in AVAILABLE_PARCOURS
+      ? AVAILABLE_PARCOURS[parcours.id as keyof typeof AVAILABLE_PARCOURS]
+      : null;
 
   return (
-    <main
-      className="min-h-[100dvh] px-[var(--padding-section-x)] py-10 min-[360px]:py-12 sm:py-20"
-      style={{
-        background: "var(--color-background-white)",
-      }}
-    >
-      {/* Background Decorative Elements */}
-      <div className="fixed inset-0 pointer-events-none overflow-hidden z-0">
-        <div className="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] bg-[var(--color-brand-primary)]/5 rounded-full blur-[120px]"></div>
-        <div className="absolute bottom-[20%] right-[-5%] w-[30%] h-[30%] bg-[var(--color-brand-primary)]/3 rounded-full blur-[100px]"></div>
-      </div>
+    <main className="min-h-[100dvh] bg-[var(--color-background-soft)] px-[var(--padding-section-x)] py-10 min-[360px]:py-12 sm:py-16">
+      <StructuredData
+        data={[
+          buildBreadcrumbJsonLd([
+            { name: "Accueil", path: "/" },
+            { name: "Formations", path: "/formations" },
+            { name: "DATA MASTER", path: "/formations/data-master" },
+            {
+              name: parcours.title,
+              path: `/formations/data-master/parcours/${parcours.id}`,
+            },
+          ]),
+          buildCourseJsonLd({
+            name: `DATA MASTER - ${parcours.title}`,
+            description: parcours.who,
+            path: `/formations/data-master/parcours/${parcours.id}`,
+          }),
+        ]}
+      />
 
-      <div className="max-w-7xl xl:max-w-[1400px] 2xl:max-w-[1600px] mx-auto relative z-10">
+      <div className="mx-auto max-w-7xl">
         <BackButton
-          className="inline-flex items-center gap-2 text-sm font-[var(--font-weight-medium)] text-[var(--color-link-text)] hover:text-[var(--color-brand-primary)] transition-all hover:-translate-x-1"
+          fallbackHref="/formations/data-master"
+          className="inline-flex items-center gap-2 text-sm font-[var(--font-weight-medium)] text-[var(--color-link-text)] transition-all hover:-translate-x-1 hover:text-[var(--color-brand-primary)]"
           style={{ fontFamily: "var(--font-family-sans)" }}
         >
           <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
@@ -38,160 +99,198 @@ export default function DataMasterParcoursPage() {
           Retour
         </BackButton>
 
-        {/* Premium Page Header */}
-        <section className="mt-8 sm:mt-12 group">
-          <div className="relative p-8 sm:p-12 rounded-[2.5rem] border border-[var(--color-border-light)] bg-white/40 backdrop-blur-xl shadow-2xl overflow-hidden transition-all duration-500 hover:border-[var(--color-brand-primary)]/10">
-            <div className="absolute top-0 right-0 p-12 opacity-[0.03] group-hover:opacity-[0.06] transition-opacity pointer-events-none">
-              <span className="text-[12rem] font-[var(--font-weight-extrabold)] leading-none" style={{ fontFamily: "var(--font-family-sans)" }}>{parcours.id}</span>
-            </div>
-            
-            <div className="relative z-10">
-              <div className="flex items-center gap-3 mb-6">
-                <span className="inline-flex items-center rounded-full px-3 py-1 text-[10px] font-[var(--font-weight-bold)] uppercase tracking-wider bg-[var(--color-brand-primary)] text-white">
+        <section className="mt-8 sm:mt-10">
+          <div className="surface-card overflow-hidden rounded-[calc(var(--radius-card)+0.2rem)]">
+            <div className="h-1 w-full bg-gradient-to-r from-[var(--color-brand-primary)] via-[var(--color-brand-primary)]/55 to-transparent" />
+            <div className="p-7 sm:p-10">
+              <div className="flex flex-wrap items-center gap-3">
+                <span className="inline-flex items-center rounded-full bg-[var(--color-brand-primary)] px-3 py-1 text-[10px] font-[var(--font-weight-bold)] uppercase tracking-[0.14em] text-white">
                   Parcours {parcours.id.padStart(2, "0")}
                 </span>
-                <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-border-light)]"></span>
-                <span className="text-[11px] font-[var(--font-weight-bold)] uppercase tracking-widest text-[var(--color-link-text)]">
-                  Data Master Series
+                <span className="text-[10px] font-[var(--font-weight-bold)] uppercase tracking-[0.16em] text-[var(--color-link-text)]">
+                  Data Master
                 </span>
               </div>
 
-              <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-8 mb-8">
-                <h1 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] leading-[1.1] max-w-4xl" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-1)" }}>
-                  {parcours.title}
-                </h1>
-                
-                <div className="flex items-center gap-3 shrink-0">
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] font-[var(--font-weight-bold)] uppercase text-[var(--color-link-text)] mb-1 opacity-70">Durée Totale</span>
-                    <span className="inline-flex items-center rounded-xl px-4 py-2 text-sm font-[var(--font-weight-extrabold)] bg-white border border-[var(--color-border-light)] shadow-sm text-[var(--color-text-heading)]">
+              <div className="mt-6 flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+                <div className="max-w-4xl">
+                  <h1
+                    className="text-[clamp(2.5rem,6vw,44px)] font-[var(--font-weight-extrabold)] leading-[1.04] text-[var(--color-text-heading)]"
+                    style={{ fontFamily: "var(--font-family-display)", letterSpacing: "-0.04em" }}
+                  >
+                    {parcours.title}
+                  </h1>
+                  <p className="mt-5 max-w-3xl text-base leading-8 text-[var(--color-text-body)] sm:text-lg">
+                    {parcours.who}
+                  </p>
+                </div>
+
+                <div className="grid w-full max-w-sm gap-3 sm:grid-cols-2">
+                  <div className="rounded-2xl border border-[var(--color-border-light)] bg-white px-4 py-3.5">
+                    <p className="text-[10px] font-[var(--font-weight-bold)] uppercase tracking-[0.14em] text-[var(--color-link-text)]">
+                      Durée
+                    </p>
+                    <p className="mt-1 text-sm font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)]">
                       {parcours.duration}
-                    </span>
+                    </p>
                   </div>
-                  <div className="flex flex-col items-end">
-                    <span className="text-[10px] font-[var(--font-weight-bold)] uppercase text-[var(--color-link-text)] mb-1 opacity-70">Rythme</span>
-                    <span className="inline-flex items-center rounded-xl px-4 py-2 text-sm font-[var(--font-weight-extrabold)] bg-white border border-[var(--color-border-light)] shadow-sm text-[var(--color-text-heading)]">
+                  <div className="rounded-2xl border border-[var(--color-border-light)] bg-white px-4 py-3.5">
+                    <p className="text-[10px] font-[var(--font-weight-bold)] uppercase tracking-[0.14em] text-[var(--color-link-text)]">
+                      Rythme
+                    </p>
+                    <p className="mt-1 text-sm font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)]">
                       {parcours.rhythm}
-                    </span>
+                    </p>
                   </div>
                 </div>
               </div>
-
-              <p className="text-[var(--color-text-body)] text-base sm:text-lg max-w-3xl leading-relaxed opacity-90" style={{ fontFamily: "var(--font-family-sans)" }}>
-                {parcours.who}
-              </p>
             </div>
           </div>
         </section>
 
-        <div className="mt-12 sm:mt-20 grid lg:grid-cols-12 gap-12 relative items-start">
-          {/* Main Content: Module Timeline */}
-          <div className="lg:col-span-8 animate-fade-up">
-            <div className="flex items-center justify-between mb-10">
-              <h2 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] tracking-tight" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-2)" }}>
-                Programme du <span className="text-[var(--color-brand-primary)]">Parcours</span>
+        <div className="mt-12 grid items-start gap-8 lg:grid-cols-[minmax(0,1fr)_360px]">
+          <div className="space-y-5">
+            <div className="mb-2">
+              <h2
+                className="text-[length:var(--font-size-heading-2)] font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)]"
+                style={{ fontFamily: "var(--font-family-display)" }}
+              >
+                Programme du <span className="text-[var(--color-brand-primary)]">parcours</span>
               </h2>
-              <span className="text-sm font-[var(--font-weight-bold)] text-[var(--color-link-text)] bg-[var(--color-section-muted)] px-3 py-1 rounded-full">
-                {orderedModules.length} Modules
-              </span>
+              <p className="mt-3 text-base text-[var(--color-text-body)] sm:text-lg">
+                Un parcours structuré pour construire des compétences utiles, directement applicables dans un contexte professionnel.
+              </p>
             </div>
 
-            <div className="relative space-y-12 pl-4 sm:pl-8 border-l-2 border-[var(--color-border-light)] ml-4 sm:ml-6">
-              {orderedModules.map((m, idx) => (
-                <div key={m!.id} className="relative group">
-                  {/* Timeline Dot */}
-                  <div className="absolute -left-[calc(1.5rem+3px)] sm:-left-[calc(2.5rem+3px)] top-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white border-2 border-[var(--color-border-light)] flex items-center justify-center z-10 group-hover:border-[var(--color-brand-primary)] group-hover:scale-110 transition-all shadow-sm">
-                    <span className="text-xs font-[var(--font-weight-extrabold)] text-[var(--color-brand-primary)]">{idx + 1}</span>
-                  </div>
-
-                  <div className="relative rounded-3xl border border-[var(--color-border-light)] bg-white p-6 sm:p-8 transition-all hover:shadow-xl hover:border-[var(--color-brand-primary)]/10">
-                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                      <div className="flex items-center gap-4">
-                        <span className="text-[10px] font-[var(--font-weight-extrabold)] uppercase tracking-widest text-[var(--color-link-text)] py-1 px-2.5 bg-[var(--color-section-muted)] rounded-md">
-                          Module {m!.id}
-                        </span>
-                        <span className="inline-flex items-center gap-1.5 text-xs font-[var(--font-weight-bold)] text-[var(--color-brand-primary)]">
-                          <span className="w-1.5 h-1.5 rounded-full bg-[var(--color-brand-primary)]"></span>
-                          {m!.level}
-                        </span>
-                      </div>
+            {orderedModules.map((module, idx) => (
+              <article
+                key={module!.id}
+                className="surface-card lift-card rounded-[calc(var(--radius-card)-0.05rem)] p-6 sm:p-7"
+              >
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  <div className="max-w-3xl">
+                    <div className="flex flex-wrap items-center gap-2.5">
+                      <span className="inline-flex items-center rounded-full border border-[var(--color-border-light)] bg-white px-3 py-1 text-[10px] font-[var(--font-weight-bold)] uppercase tracking-[0.14em] text-[var(--color-link-text)]">
+                        Module {module!.id}
+                      </span>
+                      <span className="inline-flex items-center rounded-full bg-[var(--color-section-tint)] px-3 py-1 text-[10px] font-[var(--font-weight-bold)] uppercase tracking-[0.12em] text-[var(--color-brand-primary)]">
+                        {module!.level}
+                      </span>
                     </div>
 
-                    <h3 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-4 leading-tight group-hover:text-[var(--color-brand-primary)] transition-colors" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-3)" }}>
-                      {m!.title}
+                    <h3
+                      className="mt-4 text-[1.45rem] font-[var(--font-weight-extrabold)] leading-[1.08] text-[var(--color-text-heading)]"
+                      style={{ fontFamily: "var(--font-family-display)" }}
+                    >
+                      {module!.title}
                     </h3>
 
-                    <p className="text-[var(--color-text-body)] text-sm sm:text-base leading-relaxed opacity-80 mb-8" style={{ fontFamily: "var(--font-family-sans)" }}>
-                      {m!.summary}
+                    <p className="mt-4 text-sm leading-7 text-[var(--color-text-body)] sm:text-base">
+                      {module!.summary}
                     </p>
+                  </div>
 
-                    <div className="grid gap-6">
-                      <div className="rounded-2xl bg-[var(--color-brand-primary)]/[0.02] p-5 border border-[var(--color-brand-primary)]/5 hover:bg-white transition-all">
-                        <h4 className="flex items-center gap-2 text-[10px] font-[var(--font-weight-bold)] uppercase tracking-wider text-[var(--color-brand-primary)] mb-4">
-                          <svg className="w-3.5 h-3.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-                          Projet Pratique
-                        </h4>
-                        <p className="text-[13px] font-[var(--font-weight-medium)] text-[var(--color-text-heading)] leading-relaxed italic">
-                          &quot;{m!.project}&quot;
-                        </p>
-                      </div>
-                    </div>
+                  <div className="inline-flex h-11 w-11 shrink-0 items-center justify-center rounded-2xl border border-[var(--color-border-light)] bg-white text-sm font-[var(--font-weight-extrabold)] text-[var(--color-brand-primary)]">
+                    {idx + 1}
                   </div>
                 </div>
-              ))}
-            </div>
+
+                <div className="mt-6 rounded-[1.35rem] border border-[var(--color-border-light)] bg-[linear-gradient(180deg,rgba(255,255,255,0.96),rgba(244,242,249,0.85))] p-4">
+                  <p className="text-[10px] font-[var(--font-weight-bold)] uppercase tracking-[0.14em] text-[var(--color-brand-primary)]">
+                    Projet pratique
+                  </p>
+                  <p className="mt-2 text-[13px] font-[var(--font-weight-medium)] leading-6 text-[var(--color-text-heading)]">
+                    {module!.project}
+                  </p>
+                </div>
+              </article>
+            ))}
           </div>
 
-          {/* Sticky Sidebar */}
-          <aside className="lg:col-span-4 lg:sticky lg:top-32 space-y-6 animate-fade-up">
-            <div className="p-8 rounded-[2rem] border border-[var(--color-border-light)] bg-[var(--color-section-tint)]/30 backdrop-blur-md shadow-lg overflow-hidden relative">
-              <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
-              </div>
-              
-              <h3 className="font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-4 leading-tight" style={{ fontFamily: "var(--font-family-sans)", fontSize: "var(--font-size-heading-3)" }}>
-                Objectif du <span className="text-[var(--color-brand-primary)]">Parcours</span>
+          <aside className="space-y-5 lg:sticky lg:top-28">
+            <div className="surface-card rounded-[calc(var(--radius-card)-0.05rem)] p-6 sm:p-7">
+              <h3
+                className="text-[1.45rem] font-[var(--font-weight-extrabold)] leading-[1.08] text-[var(--color-text-heading)]"
+                style={{ fontFamily: "var(--font-family-display)" }}
+              >
+                Objectif du parcours
               </h3>
-              <p className="text-[var(--color-text-body)] text-sm sm:text-base leading-relaxed opacity-90 mb-8" style={{ fontFamily: "var(--font-family-sans)" }}>
+              <p className="mt-4 text-sm leading-7 text-[var(--color-text-body)] sm:text-base">
                 {parcours.outcome}
               </p>
 
-              <div className="space-y-4 pt-6 border-t border-[var(--color-border-light)]">
-                <Link
-                  href={{ pathname: "/formulaire/inscription", query: { parcours: `DATA MASTER — ${parcours.title}` } }}
-                  className="inline-flex items-center justify-center w-full rounded-2xl px-6 py-4 text-white text-sm font-[var(--font-weight-bold)] transition-all hover:shadow-2xl hover:opacity-95 active:scale-[0.98]"
-                  style={{
-                    backgroundColor: "var(--color-button-primary-bg)",
-                    fontFamily: "var(--font-family-sans)",
-                  }}
-                >
-                  S&apos;inscrire et payer
-                </Link>
+              <div className="mt-6 grid gap-3">
+                <div className="rounded-2xl border border-[var(--color-border-light)] bg-white px-4 py-3.5">
+                  <p className="text-[10px] font-[var(--font-weight-bold)] uppercase tracking-[0.14em] text-[var(--color-link-text)]">
+                    Tarif
+                  </p>
+                  <p className="mt-1 text-sm font-[var(--font-weight-extrabold)] text-[var(--color-brand-primary)]">
+                    25 000 FCFA
+                  </p>
+                </div>
+                {session && (
+                  <div className="rounded-[1.35rem] border border-[var(--color-brand-primary)]/10 bg-[linear-gradient(180deg,rgba(236,232,248,0.55),rgba(255,255,255,0.92))] p-4">
+                    <p className="text-[10px] font-[var(--font-weight-bold)] uppercase tracking-[0.14em] text-[var(--color-brand-primary)]">
+                      Session ouverte
+                    </p>
+                    <div className="mt-3 space-y-2 text-sm leading-6 text-[var(--color-text-heading)]">
+                      <p>
+                        <span className="font-[var(--font-weight-bold)]">Date :</span> {session.date}
+                      </p>
+                      <p>
+                        <span className="font-[var(--font-weight-bold)]">Lieu :</span> {session.location}
+                      </p>
+                      <p>
+                        <span className="font-[var(--font-weight-bold)]">Format :</span> Disponible en ligne
+                      </p>
+                      <p>
+                        <span className="font-[var(--font-weight-bold)]">Places :</span> Limitées
+                      </p>
+                    </div>
+                  </div>
+                )}
+                {session ? (
+                  <a
+                    href={session.paymentUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="brand-button inline-flex items-center justify-center rounded-[var(--border-radius-button)] px-6 py-3.5 text-sm font-[var(--font-weight-bold)] text-white"
+                  >
+                    S&apos;inscrire et payer
+                  </a>
+                ) : (
+                  <Link
+                    href={{ pathname: "/formulaire/inscription", query: { parcours: `DATA MASTER — ${parcours.title}` } }}
+                    className="brand-button inline-flex items-center justify-center rounded-[var(--border-radius-button)] px-6 py-3.5 text-sm font-[var(--font-weight-bold)] text-white"
+                  >
+                    S&apos;inscrire et payer
+                  </Link>
+                )}
               </div>
             </div>
 
-            <div className="p-6 rounded-3xl border border-[var(--color-border-light)] bg-white shadow-sm">
-              <h4 className="text-[10px] font-[var(--font-weight-bold)] uppercase tracking-widest text-[var(--color-link-text)] mb-4">Informations Clé</h4>
-              <ul className="space-y-4">
-                <li className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[var(--color-section-muted)] flex items-center justify-center text-[var(--color-brand-primary)]">
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase font-[var(--font-weight-bold)] text-[var(--color-link-text)] opacity-60">Durée</span>
-                    <span className="text-xs font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)]">{parcours.duration}</span>
-                  </div>
-                </li>
-                <li className="flex items-center gap-3">
-                  <div className="w-8 h-8 rounded-lg bg-[var(--color-section-muted)] flex items-center justify-center text-[var(--color-brand-primary)]">
-                    <svg className="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-                  </div>
-                  <div className="flex flex-col">
-                    <span className="text-[10px] uppercase font-[var(--font-weight-bold)] text-[var(--color-link-text)] opacity-60">Rythme</span>
-                    <span className="text-xs font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)]">{parcours.rhythm}</span>
-                  </div>
-                </li>
-              </ul>
+            <div className="surface-card rounded-[calc(var(--radius-card)-0.05rem)] p-6">
+              <h4 className="text-[10px] font-[var(--font-weight-bold)] uppercase tracking-[0.14em] text-[var(--color-link-text)]">
+                Informations clés
+              </h4>
+              <div className="mt-4 grid gap-3">
+                <div className="rounded-2xl border border-[var(--color-border-light)] bg-white px-4 py-3">
+                  <p className="text-[10px] font-[var(--font-weight-bold)] uppercase tracking-[0.12em] text-[var(--color-link-text)]">
+                    Modules
+                  </p>
+                  <p className="mt-1 text-sm font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)]">
+                    {orderedModules.length} modules
+                  </p>
+                </div>
+                <div className="rounded-2xl border border-[var(--color-border-light)] bg-white px-4 py-3">
+                  <p className="text-[10px] font-[var(--font-weight-bold)] uppercase tracking-[0.12em] text-[var(--color-link-text)]">
+                    Rythme
+                  </p>
+                  <p className="mt-1 text-sm font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)]">
+                    {parcours.rhythm}
+                  </p>
+                </div>
+              </div>
             </div>
           </aside>
         </div>
@@ -199,4 +298,3 @@ export default function DataMasterParcoursPage() {
     </main>
   );
 }
-

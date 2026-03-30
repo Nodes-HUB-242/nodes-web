@@ -1,7 +1,7 @@
 "use client";
 
 import BackButton from "@/components/BackButton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 const initialFormData = {
@@ -39,16 +39,14 @@ function validateForm(data: typeof initialFormData): FieldErrors {
 
 export default function FormulaireForm() {
   const searchParams = useSearchParams();
-  const [formData, setFormData] = useState(initialFormData);
+  const objetFromQuery = searchParams.get("objet") ?? "";
+  const [formData, setFormData] = useState(() => ({
+    ...initialFormData,
+    objet: objetFromQuery,
+  }));
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-
-  useEffect(() => {
-    const objet = searchParams.get("objet");
-    if (!objet) return;
-    setFormData((prev) => ({ ...prev, objet }));
-  }, [searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -118,7 +116,7 @@ export default function FormulaireForm() {
 
       setStatus("success");
       setMessage("Message envoyé avec succès.");
-      setFormData(initialFormData);
+      setFormData({ ...initialFormData, objet: objetFromQuery });
       setFieldErrors({});
     } catch {
       setStatus("error");
@@ -130,10 +128,11 @@ export default function FormulaireForm() {
   return (
     <div
       className="min-h-screen min-h-[100dvh] py-8 min-[360px]:py-10 sm:py-12 px-3 min-[280px]:px-4 sm:px-6 lg:px-8"
-      style={{ backgroundColor: "var(--color-section-muted)" }}
+      style={{ backgroundColor: "var(--color-background-soft)" }}
     >
       <div className="mx-auto max-w-xl">
         <BackButton
+          fallbackHref="/"
           className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-[var(--color-link-text)] hover:text-[var(--color-brand-primary)] transition-colors"
           style={{ fontFamily: "var(--font-family-sans)" }}
         >
@@ -144,20 +143,19 @@ export default function FormulaireForm() {
         </BackButton>
 
         <div
-          className="rounded-xl min-[360px]:rounded-2xl bg-white p-4 min-[280px]:p-5 min-[360px]:p-6 sm:p-8 shadow-sm"
-          style={{ boxShadow: "0 1px 3px rgba(0,0,0,0.06)" }}
+          className="surface-card rounded-[var(--radius-card)] p-4 min-[280px]:p-5 min-[360px]:p-6 sm:p-8"
         >
           <h1
             className="text-lg min-[280px]:text-xl sm:text-2xl font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)] mb-2"
-            style={{ fontFamily: "var(--font-family-sans)" }}
+            style={{ fontFamily: "var(--font-family-display)" }}
           >
-            Formulaire
+            Formulaire de contact
           </h1>
           <p
             className="text-[var(--color-text-body)] text-sm sm:text-base mb-6"
             style={{ fontFamily: "var(--font-family-sans)" }}
           >
-            Remplissez le formulaire pour une consultation gratuite.
+            Décrivez votre besoin et notre équipe vous recontactera pour qualifier la demande.
           </p>
 
           <form onSubmit={handleSubmit} className="space-y-5">
@@ -281,11 +279,9 @@ export default function FormulaireForm() {
             <button
               type="submit"
               disabled={status === "loading"}
-              className="flex w-full items-center justify-center gap-2 py-3 px-6 rounded-xl text-white font-medium text-base transition-all duration-200 hover:opacity-95 hover:shadow-lg focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2 disabled:opacity-70 disabled:cursor-not-allowed disabled:hover:shadow-none"
+              className="brand-button flex w-full items-center justify-center gap-2 rounded-xl px-6 py-3 text-base font-medium text-white focus:outline-none focus:ring-2 focus:ring-[var(--color-brand-primary)] focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:shadow-none"
               style={{
-                backgroundColor: "var(--color-button-primary-bg)",
                 fontFamily: "var(--font-family-sans)",
-                boxShadow: "0 4px 14px rgba(26, 0, 93, 0.25)",
               }}
             >
               {status === "loading" ? (

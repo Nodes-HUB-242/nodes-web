@@ -1,7 +1,7 @@
 "use client";
 
 import BackButton from "@/components/BackButton";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useSearchParams } from "next/navigation";
 
 const initialFormData = {
@@ -47,16 +47,14 @@ function validateForm(data: typeof initialFormData): FieldErrors {
 
 export default function InscriptionForm() {
   const searchParams = useSearchParams();
-  const [formData, setFormData] = useState(initialFormData);
+  const parcoursFromQuery = searchParams.get("parcours") ?? "";
+  const [formData, setFormData] = useState(() => ({
+    ...initialFormData,
+    parcours: parcoursFromQuery,
+  }));
   const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">("idle");
   const [message, setMessage] = useState("");
   const [fieldErrors, setFieldErrors] = useState<FieldErrors>({});
-
-  useEffect(() => {
-    const parcours = searchParams.get("parcours");
-    if (!parcours) return;
-    setFormData((prev) => ({ ...prev, parcours }));
-  }, [searchParams]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -129,8 +127,7 @@ export default function InscriptionForm() {
 
       setStatus("success");
       setMessage("Demande d'inscription envoyée. Nous vous recontactons rapidement.");
-      const fromQuery = searchParams.get("parcours") || "";
-      setFormData({ ...initialFormData, parcours: fromQuery });
+      setFormData({ ...initialFormData, parcours: parcoursFromQuery });
       setFieldErrors({});
     } catch {
       setStatus("error");
@@ -151,6 +148,7 @@ export default function InscriptionForm() {
     >
       <div className="mx-auto max-w-xl">
         <BackButton
+          fallbackHref="/formations"
           className="mb-8 inline-flex items-center gap-2 text-sm font-medium text-[var(--color-link-text)] hover:text-[var(--color-brand-primary)] transition-colors"
           style={{ fontFamily: "var(--font-family-sans)" }}
         >

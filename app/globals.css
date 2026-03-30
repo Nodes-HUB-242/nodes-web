@@ -1,58 +1,49 @@
 @import "tailwindcss";
 
-/* Variables – couleur principale #1a005d */
 :root {
-  /* Colors */
   --color-brand-primary: #1a005d;
-  --color-text-heading: #1a005d;
-  --color-text-body: #2a2a3e;
-  --color-button-text: #4a4a5e;
-  --color-link-text: #5a5a6e;
-  --color-border-light: #e0e2ee;
+  --color-brand-primary-strong: #120042;
+  --color-brand-accent: #d6c7ff;
+  --color-text-heading: #110f2b;
+  --color-text-body: #383651;
+  --color-button-text: #4d4a68;
+  --color-link-text: #66627f;
+  --color-border-light: #dddbea;
   --color-background-white: #ffffff;
-  --color-section-muted: #f5f4fa;
-  --color-section-tint: #ebe8f5;
+  --color-background-soft: #fbfafe;
+  --color-section-muted: #f4f2f9;
+  --color-section-tint: #ece8f8;
   --color-footer-bg: #1a005d;
   --color-button-primary-bg: #1a005d;
   --color-button-primary-hover: #25007a;
-  --font-size-heading-2: clamp(1.5rem, 3vw, 2.25rem);
-  --font-size-heading-3: clamp(1.125rem, 2vw, 1.5rem);
-  --font-size-body: 1rem;
-  --font-size-small: 0.875rem;
-
-  /* Typography */
-  --font-family-sans: ui-sans-serif, system-ui, sans-serif, "Segoe UI", Roboto, sans-serif;
-  --font-size-tagline: 0.875rem;
-  --font-size-heading-1: clamp(2rem, 4vw, 3rem);
+  --font-size-heading-1: clamp(2.8rem, 5vw, 5.5rem);
+  --font-size-heading-2: clamp(2rem, 3.2vw, 3.25rem);
+  --font-size-heading-3: clamp(1.2rem, 2vw, 1.6rem);
+  --font-size-body: 1.03rem;
+  --font-size-small: 0.93rem;
+  --font-size-tagline: 0.82rem;
   --font-size-button: 1rem;
   --font-size-link: 1rem;
+  --font-family-sans: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
+  --font-family-display: "Avenir Next", "Segoe UI", "Helvetica Neue", Arial, sans-serif;
   --font-weight-normal: 400;
   --font-weight-medium: 500;
-  --font-weight-bold: 700;
+  --font-weight-bold: 680;
   --font-weight-extrabold: 800;
-  --line-height-heading: 1.2;
-  --letter-spacing-expanded: 0.08em;
-
-  /* Spacing – 280px (foldables) à 2560px+ (4K) */
-  --padding-section-x: clamp(0.75rem, 3vw, 5rem);
-  --padding-section-y: clamp(1.25rem, 4vw, 5rem);
-  --gap-button-link: 1.5rem;
-  --padding-button-x: 1.5rem;
-  --padding-button-y: 0.875rem;
-
-  /* Border & radius */
-  --border-radius-button: 0.5rem;
-
-  /* Shadows */
-  --shadow-button: 0 4px 14px rgba(0, 0, 0, 0.08);
-  --shadow-button-hover: 0 6px 20px rgba(0, 0, 0, 0.12);
-  --shadow-wave: 0 0 0 1px rgba(0, 0, 0, 0.04);
-  --shadow-header: 0 4px 24px rgba(26, 0, 93, 0.08), 0 2px 8px rgba(0, 0, 0, 0.04);
-  --shadow-nav-elevated: 0 8px 32px rgba(26, 0, 93, 0.06), 0 2px 12px rgba(0, 0, 0, 0.04);
+  --line-height-heading: 1.06;
+  --letter-spacing-expanded: 0.14em;
+  --padding-section-x: clamp(1rem, 3vw, 5rem);
+  --padding-section-y: clamp(4rem, 8vw, 7rem);
+  --border-radius-button: 0.85rem;
+  --radius-card: 1.5rem;
+  --shadow-button: 0 12px 30px rgba(26, 0, 93, 0.14);
+  --shadow-button-hover: 0 14px 32px rgba(26, 0, 93, 0.16);
+  --shadow-surface: 0 12px 30px rgba(17, 15, 43, 0.045);
+  --shadow-header: 0 8px 28px rgba(26, 0, 93, 0.08), 0 2px 10px rgba(0, 0, 0, 0.04);
+  --shadow-nav-elevated: 0 18px 48px rgba(26, 0, 93, 0.08), 0 6px 18px rgba(0, 0, 0, 0.04);
   --radius-header: 1rem;
 }
 
-/* Navbar professionnelle */
 .nav-link {
   position: relative;
 }
@@ -73,17 +64,173 @@
 
 html {
   scroll-behavior: smooth;
-  /* Réduit légèrement toutes les tailles (rem, variables CSS, utilitaires Tailwind) */
-  font-size: 92%;
+  font-size: 95%;
+  overflow-x: hidden;
 }
+
 body {
   font-family: var(--font-family-sans);
   color: var(--color-text-body);
-  background: var(--color-background-white);
+  background: linear-gradient(180deg, #ffffff 0%, #fcfbff 100%);
   padding-left: env(safe-area-inset-left);
   padding-right: env(safe-area-inset-right);
+  text-rendering: optimizeLegibility;
+  overflow-x: hidden;
 }
-/* Marge de scroll – adapté selon hauteur navbar (280px → 4K) */
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-family: var(--font-family-display);
+  color: var(--color-text-heading);
+  letter-spacing: -0.03em;
+}
+
+a,
+button,
+input,
+textarea {
+  transition:
+    color 0.2s ease,
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    transform 0.2s ease;
+}
+
+a:focus-visible,
+button:focus-visible,
+input:focus-visible,
+textarea:focus-visible {
+  outline: 3px solid rgba(26, 0, 93, 0.18);
+  outline-offset: 3px;
+}
+
+.eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: var(--font-size-tagline);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-expanded);
+  text-transform: uppercase;
+  color: var(--color-brand-primary);
+}
+
+.eyebrow::before {
+  content: "";
+  width: 2.5rem;
+  height: 1px;
+  background: rgba(26, 0, 93, 0.3);
+}
+
+.surface-card {
+  border: 1px solid rgba(26, 0, 93, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(248, 246, 255, 0.96));
+  box-shadow: 0 18px 42px rgba(17, 15, 43, 0.07);
+  backdrop-filter: blur(10px);
+}
+
+.surface-card-strong {
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: linear-gradient(180deg, rgba(255,255,255,0.18), rgba(255,255,255,0.08));
+  box-shadow: 0 22px 54px rgba(8, 7, 25, 0.22);
+  backdrop-filter: blur(16px);
+}
+
+.lift-card {
+  transition:
+    transform 0.28s ease,
+    box-shadow 0.28s ease,
+    border-color 0.28s ease,
+    background-color 0.28s ease,
+    opacity 0.28s ease;
+}
+
+.lift-card:hover {
+  transform: translateY(-6px);
+  box-shadow: 0 26px 58px rgba(17, 15, 43, 0.12);
+  border-color: rgba(26, 0, 93, 0.16);
+}
+
+.hero-title {
+  text-wrap: balance;
+  text-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+}
+
+.hero-copy {
+  text-shadow: 0 3px 12px rgba(0, 0, 0, 0.12);
+}
+
+.hero-title,
+h1,
+h2,
+h3 {
+  text-wrap: balance;
+}
+
+p,
+li {
+  text-wrap: pretty;
+}
+
+.brand-button {
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: linear-gradient(180deg, #25106f 0%, var(--color-button-primary-bg) 100%);
+  box-shadow:
+    0 14px 32px rgba(26, 0, 93, 0.16),
+    inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  color: #ffffff;
+  backdrop-filter: blur(10px);
+}
+
+.brand-button:hover {
+  transform: translateY(-1px);
+  box-shadow:
+    0 18px 36px rgba(26, 0, 93, 0.18),
+    inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+.brand-button:active {
+  transform: translateY(0);
+}
+
+.secondary-button {
+  border: 1px solid rgba(26, 0, 93, 0.12);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.94), rgba(247, 245, 253, 0.92));
+  box-shadow:
+    0 10px 24px rgba(17, 15, 43, 0.05),
+    inset 0 1px 0 rgba(255, 255, 255, 0.9);
+  color: var(--color-text-heading);
+  backdrop-filter: blur(8px);
+}
+
+.secondary-button:hover {
+  transform: translateY(-1px);
+  border-color: rgba(26, 0, 93, 0.18);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(243, 240, 252, 0.95));
+  box-shadow:
+    0 14px 28px rgba(17, 15, 43, 0.07),
+    inset 0 1px 0 rgba(255, 255, 255, 0.95);
+}
+
+.secondary-button:active {
+  transform: translateY(0);
+}
+
+.trust-logo {
+  filter: grayscale(1) contrast(1.05);
+  opacity: 0.88;
+}
+
+.trust-logo:hover {
+  filter: grayscale(0);
+  opacity: 1;
+}
+
 [id="hero"],
 [id="services"],
 [id="formation"],
@@ -138,13 +285,11 @@ body {
   }
 }
 
-/* Slider projets : masquer la scrollbar tout en gardant le scroll */
 [data-slider]::-webkit-scrollbar,
 .overflow-x-auto::-webkit-scrollbar {
   display: none;
 }
 
-/* Animations d'apparition au scroll */
 @keyframes fade-up {
   from {
     opacity: 0;
@@ -173,7 +318,7 @@ body {
   animation: fade-up 0.6s ease-out forwards;
 }
 
-/* Réduction du mouvement (accessibilité) */
+
 @media (prefers-reduced-motion: reduce) {
   .animate-on-scroll {
     animation: none;
@@ -188,7 +333,6 @@ body {
   }
 }
 
-/* Mobile paysage – hero plus compact */
 @media (max-height: 500px) and (orientation: landscape) {
   [id="hero"] {
     min-height: auto;
@@ -197,11 +341,22 @@ body {
   }
 }
 
-/* Zones tactiles minimales (44×44px) pour boutons clés sur mobile */
 @media (pointer: coarse) and (max-width: 767px) {
   button[type="button"],
   .touch-target {
     min-height: 44px;
     min-width: 44px;
+  }
+}
+
+@media (max-width: 640px) {
+  :root {
+    --padding-section-y: clamp(3.5rem, 10vw, 5rem);
+    --font-size-body: 1rem;
+  }
+
+  .surface-card,
+  .surface-card-strong {
+    backdrop-filter: blur(8px);
   }
 }

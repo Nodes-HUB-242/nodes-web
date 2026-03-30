@@ -239,7 +239,7 @@ export const DATA_MASTER_PARCOURS = [
     modules: ["01", "02", "03", "04", "05", "07"],
     duration: "54 heures — 9 semaine",
     rhythm: "2 sessions de 3h par semaine",
-    outcome: "Dashboards Power BI et Tableau professionnels, SQL fluide, reporting autonome et actualisable",
+    outcome: "Excel, Tableau de bord, SQL fluide, reporting autonome et actualisable",
   },
   {
     id: "2",
