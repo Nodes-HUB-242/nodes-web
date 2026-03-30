@@ -143,10 +143,32 @@ cd /var/www/nodes-web
 PORT=3002 npm run start
 ```
 
-Si le démarrage manuel fonctionne, arrêter le process de test puis déclarer le process dans PM2 :
+Si le démarrage manuel fonctionne, arrêter le process de test puis utiliser le fichier PM2 versionné `ecosystem.config.js`.
+
+Le fichier est déjà prévu dans le projet :
+
+```js
+module.exports = {
+  apps: [
+    {
+      name: "nodes-web",
+      cwd: "/var/www/nodes-web",
+      script: "npm",
+      args: "start",
+      env: {
+        NODE_ENV: "production",
+        PORT: 3002,
+        NEXT_PUBLIC_SITE_URL: "https://nodes-hub.com"
+      }
+    }
+  ]
+};
+```
+
+Démarrer avec PM2 :
 
 ```bash
-pm2 start npm --name nodes-web -- start -- --port 3002
+pm2 start ecosystem.config.js
 ```
 
 Vérifier :
@@ -314,42 +336,14 @@ Vérifier le port occupé :
 sudo ss -ltnp | grep ':3002'
 ```
 
-## 13. Variante avec fichier ecosystem PM2
-
-Si tu préfères une config PM2 versionnée, crée `ecosystem.config.js` avec :
-
-```js
-module.exports = {
-  apps: [
-    {
-      name: "nodes-web",
-      cwd: "/var/www/nodes-web",
-      script: "npm",
-      args: "start -- --port 3002",
-      env: {
-        NODE_ENV: "production",
-        PORT: 3002
-      }
-    }
-  ]
-};
-```
-
-Puis lancer :
-
-```bash
-pm2 start ecosystem.config.js
-pm2 save
-```
-
-## 14. Points d'attention spécifiques à ce projet
+## 13. Points d'attention spécifiques à ce projet
 
 - L'application expose une route API `POST /api/contact` ; `FLOW_API_KEY` doit être présent en production
 - `NEXT_PUBLIC_SITE_URL` doit correspondre à l'URL publique finale pour que le SEO reste correct
 - L'admin `/admin` ne doit pas être indexé ; c'est déjà géré côté app
 - La build peut échouer si les variables d'environnement ne sont pas cohérentes ou si les dépendances ne sont pas installées proprement
 
-## 15. Recommandation finale
+## 14. Recommandation finale
 
 Sur cette instance Lightsail :
 

@@ -4,10 +4,10 @@ set -euo pipefail
 
 APP_NAME="nodes-web"
 APP_DIR="/var/www/nodes-web"
-APP_PORT="3002"
+PM2_CONFIG="ecosystem.config.js"
 BRANCH="${1:-main}"
 
-echo "==> Deploy ${APP_NAME} on port ${APP_PORT}"
+echo "==> Deploy ${APP_NAME} with PM2 config ${PM2_CONFIG}"
 
 if ! command -v git >/dev/null 2>&1; then
   echo "git is not installed"
@@ -36,6 +36,11 @@ fi
 
 cd "${APP_DIR}"
 
+if [ ! -f "${PM2_CONFIG}" ]; then
+  echo "PM2 config not found: ${APP_DIR}/${PM2_CONFIG}"
+  exit 1
+fi
+
 echo "==> Fetch latest code"
 git fetch origin
 git checkout "${BRANCH}"
@@ -52,10 +57,10 @@ npm run build
 
 if pm2 describe "${APP_NAME}" >/dev/null 2>&1; then
   echo "==> Restart existing PM2 app"
-  pm2 restart "${APP_NAME}"
+  pm2 restart "${PM2_CONFIG}" --only "${APP_NAME}"
 else
   echo "==> Start new PM2 app"
-  pm2 start npm --name "${APP_NAME}" -- start -- --port "${APP_PORT}"
+  pm2 start "${PM2_CONFIG}"
 fi
 
 echo "==> Save PM2 process list"
