@@ -71,7 +71,7 @@ const TRUST_METRICS = [
     value: "Ancrage Local",
     label: "Solutions adaptées aux réalités du terrain et africaines",
   },
-];
+] as const;
 
 const TEAM_FEATURES = [
   { label: "Startup congolaise spécialisée en IA et transformation digitale" },
@@ -188,12 +188,12 @@ const EVENTS_AND_REPRESENTATION = [
 
 const PARTNER_IMAGES = [
   { src: "/nsia.png", alt: "NSIA Assurances" },
-  { src: "/Airtel_RDC.png", alt: "Airtel RDC" },
+  { src: "/Airtel_RDC.png", alt: "Airtel" },
   { src: "/canal.png", alt: "Canal+" },
   { src: "/caria.png", alt: "CARIA" },
   { src: "/base.png", alt: "BASE64" },
   { src: "/mtn.jpg", alt: "MTN" },
-];
+] as const;
 
 const FOOTER_SERVICES = [
   "Solutions d'intelligence artificielle",
@@ -250,7 +250,7 @@ export default function Home() {
       <main>
         <section
           id="hero"
-          className="relative flex min-h-screen items-center overflow-hidden pt-24 sm:pt-28 lg:pt-0"
+          className="group relative flex min-h-screen items-center overflow-hidden pt-24 sm:pt-28 lg:pt-0"
         >
           <div className="absolute inset-0">
             <Image
@@ -259,12 +259,12 @@ export default function Home() {
               fill
               priority
               sizes="100vw"
-              className="object-cover object-center"
+              className="object-cover object-center transition-transform duration-[1400ms] ease-out group-hover:scale-[1.05]"
             />
             <div className="absolute inset-0 bg-[radial-gradient(circle_at_top_right,rgba(214,199,255,0.22),transparent_30%),linear-gradient(115deg,rgba(9,9,18,0.9),rgba(17,8,42,0.8)_55%,rgba(10,4,20,0.92))]" />
           </div>
 
-          <div className="relative z-10 mx-auto grid w-full max-w-7xl gap-8 px-[var(--padding-section-x)] py-14 sm:py-16 lg:grid-cols-[minmax(0,1.1fr)_minmax(280px,420px)] lg:items-end">
+          <div className="relative z-10 mx-auto w-full max-w-7xl px-[var(--padding-section-x)] py-14 sm:py-16">
             <AnimateOnScroll className="max-w-3xl">
               <span
                 className="eyebrow text-white before:bg-white/35"
@@ -314,28 +314,6 @@ export default function Home() {
                 </Link>
               </div>
             </AnimateOnScroll>
-
-            <AnimateOnScroll delay={120}>
-              <div className="surface-card-strong rounded-[1.8rem] p-5 text-white sm:p-7">
-                <p className="text-xs uppercase tracking-[0.18em] text-white/60">Pourquoi Nodes</p>
-                <div className="mt-5 space-y-4">
-                  {TRUST_METRICS.map((item) => (
-                    <div
-                      key={item.value}
-                      className="rounded-2xl border border-white/10 bg-white/6 p-4 transition-colors duration-200 hover:bg-white/9"
-                    >
-                      <p
-                        className="text-lg font-[var(--font-weight-extrabold)] text-white"
-                        style={{ fontFamily: "var(--font-family-display)" }}
-                      >
-                        {item.value}
-                      </p>
-                      <p className="mt-1 text-sm leading-6 text-white/72">{item.label}</p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </AnimateOnScroll>
           </div>
         </section>
 
@@ -377,6 +355,61 @@ export default function Home() {
                       {service.title}
                     </h3>
                     <p className="mt-3 text-sm leading-7 text-[var(--color-text-body)]">{service.desc}</p>
+                  </article>
+                ))}
+              </div>
+            </AnimateOnScroll>
+          </div>
+        </section>
+
+        <section className="bg-[var(--color-background-soft)] px-[var(--padding-section-x)] py-[var(--padding-section-y)]">
+          <div className="mx-auto max-w-7xl">
+            <AnimateOnScroll className="max-w-2xl">
+              <span className="eyebrow">Pourquoi Nodes</span>
+              <h2 className="mt-5 text-[length:var(--font-size-heading-2)] font-[var(--font-weight-extrabold)]">
+                Une approche terrain, orientée impact.
+              </h2>
+              <p className="mt-5 text-[length:var(--font-size-body)] leading-8 text-[var(--color-text-body)]">
+                Nous construisons des solutions qui fonctionnent dans le réel : simples à déployer, utiles dès le
+                premier jour, et adaptées aux contraintes locales.
+              </p>
+            </AnimateOnScroll>
+
+            <AnimateOnScroll delay={120} className="mt-12">
+              <div className="grid gap-5 md:grid-cols-3">
+                {TRUST_METRICS.map((item) => (
+                  <article
+                    key={item.value}
+                    className="group surface-card lift-card relative overflow-hidden rounded-[var(--radius-card)] p-6"
+                  >
+                    <div className="absolute -right-16 -top-16 h-44 w-44 rounded-full bg-[var(--color-section-tint)] opacity-60 blur-2xl transition-opacity duration-300 group-hover:opacity-80" />
+                    <div className="relative">
+                      <p
+                        className="text-2xl font-[var(--font-weight-extrabold)] text-[var(--color-text-heading)]"
+                        style={{ fontFamily: "var(--font-family-display)" }}
+                      >
+                        {item.value}
+                      </p>
+                      <p className="mt-3 text-sm leading-7 text-[var(--color-text-body)]">{item.label}</p>
+                      <div className="mt-6 inline-flex items-center gap-2 text-xs font-[var(--font-weight-bold)] uppercase tracking-[0.16em] text-[var(--color-brand-primary)]">
+                        Découvrir
+                        <svg
+                          width="14"
+                          height="14"
+                          viewBox="0 0 24 24"
+                          fill="none"
+                          stroke="currentColor"
+                          strokeWidth="2.5"
+                          strokeLinecap="round"
+                          strokeLinejoin="round"
+                          aria-hidden
+                          className="transition-transform duration-200 group-hover:translate-x-0.5"
+                        >
+                          <path d="M5 12h14" />
+                          <path d="M12 5l7 7-7 7" />
+                        </svg>
+                      </div>
+                    </div>
                   </article>
                 ))}
               </div>
@@ -493,14 +526,17 @@ export default function Home() {
 
         <section id="story" className="px-[var(--padding-section-x)] py-[var(--padding-section-y)]">
           <div className="mx-auto grid max-w-7xl gap-8 lg:grid-cols-[460px_minmax(0,1fr)] lg:items-center">
-            <AnimateOnScroll delay={80} className="relative overflow-hidden rounded-[calc(var(--radius-card)+0.4rem)]">
+            <AnimateOnScroll
+              delay={80}
+              className="group relative overflow-hidden rounded-[calc(var(--radius-card)+0.4rem)] shadow-sm transition-shadow duration-300 ease-out hover:shadow-xl"
+            >
               <div className="relative aspect-[4/5]">
                 <Image
                   src="/ia.jpg"
                   alt="Equipe Nodes Technology"
                   fill
                   sizes="(max-width: 1024px) 100vw, 460px"
-                  className="object-cover object-top"
+                  className="object-cover object-top transition-transform duration-500 ease-out group-hover:scale-[1.04]"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[rgba(17,15,43,0.2)] to-transparent" />
               </div>
@@ -577,14 +613,17 @@ export default function Home() {
                 ))}
               </AnimateOnScroll>
 
-              <AnimateOnScroll delay={180} className="relative overflow-hidden rounded-[calc(var(--radius-card)+0.25rem)]">
+              <AnimateOnScroll
+                delay={180}
+                className="group relative overflow-hidden rounded-[calc(var(--radius-card)+0.25rem)] shadow-sm transition-shadow duration-300 ease-out hover:shadow-xl"
+              >
                 <div className="relative aspect-[4/3]">
                   <Image
                     src="/pr2.jpg"
                     alt="Illustration du processus Nodes Technology"
                     fill
                     sizes="(max-width: 1024px) 100vw, 440px"
-                    className="object-cover"
+                    className="object-cover transition-transform duration-500 ease-out group-hover:scale-[1.04]"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-[rgba(17,15,43,0.22)] to-transparent" />
                 </div>
@@ -617,23 +656,18 @@ export default function Home() {
             </AnimateOnScroll>
 
             <AnimateOnScroll delay={160} className="mt-12">
-              <div className="surface-card rounded-[calc(var(--radius-card)+0.2rem)] p-5 sm:p-8">
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-3 xl:grid-cols-6">
-                  {PARTNER_IMAGES.map((partner) => (
-                    <div
-                      key={partner.src}
-                      className="flex min-h-[104px] items-center justify-center rounded-2xl border border-[var(--color-border-light)] bg-white/96 px-5 py-4 transition-colors duration-200 hover:bg-white"
-                    >
-                      <Image
-                        src={partner.src}
-                        alt={partner.alt}
-                        width={140}
-                        height={60}
-                        className="trust-logo h-11 w-auto object-contain sm:h-12"
-                      />
-                    </div>
-                  ))}
-                </div>
+              <div className="flex flex-wrap items-center justify-center gap-5 sm:gap-7 lg:gap-10">
+                {PARTNER_IMAGES.map((partner) => (
+                  <div key={partner.src} className="flex items-center justify-center px-2 py-2">
+                    <Image
+                      src={partner.src}
+                      alt={partner.alt}
+                      width={140}
+                      height={60}
+                      className="trust-logo h-9 w-auto object-contain sm:h-10"
+                    />
+                  </div>
+                ))}
               </div>
             </AnimateOnScroll>
           </div>
@@ -769,10 +803,28 @@ export default function Home() {
           </div>
 
           <div>
-            <h3
-              className="text-xs font-[var(--font-weight-bold)] uppercase tracking-[0.16em] text-white"
-              style={{ color: "#ffffff" }}
-            >
+            <h3 className="text-xs font-[var(--font-weight-bold)] uppercase tracking-[0.16em] text-white">
+              Nos formations
+            </h3>
+            <ul className="mt-4 space-y-3 text-sm text-white/84">
+              <li>
+                <Link href="/formations" className="hover:text-white">
+                  Toutes nos formations
+                </Link>
+              </li>
+              <li>
+                <Link href="/formations/ia-master" className="hover:text-white">
+                  IA MASTER
+                </Link>
+              </li>
+              <li>
+                <Link href="/formations/data-master" className="hover:text-white">
+                  DATA MASTER
+                </Link>
+              </li>
+            </ul>
+
+            <h3 className="mt-8 text-xs font-[var(--font-weight-bold)] uppercase tracking-[0.16em] text-white">
               Nos services
             </h3>
             <ul className="mt-4 space-y-3 text-sm text-white/84">
@@ -787,10 +839,7 @@ export default function Home() {
           </div>
 
           <div>
-            <h3
-              className="text-xs font-[var(--font-weight-bold)] uppercase tracking-[0.16em] text-white"
-              style={{ color: "#ffffff" }}
-            >
+            <h3 className="text-xs font-[var(--font-weight-bold)] uppercase tracking-[0.16em] text-white">
               Contact
             </h3>
             <div className="mt-4 flex flex-col items-start gap-3 text-sm leading-7 text-white/84">
